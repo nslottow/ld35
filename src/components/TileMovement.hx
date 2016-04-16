@@ -31,7 +31,6 @@ class TileMovement extends Component {
 
 		dest_tile.entities.push(entity);	
 
-
 		// Update our tile and world position	
 		x = _x;
 		y = _y;

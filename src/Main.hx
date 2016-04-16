@@ -118,6 +118,8 @@ class Main extends luxe.Game {
 
 			states.set(default_state);
 		}
+
+		Music.init();
 #else
 		states.set('title');
 #end
