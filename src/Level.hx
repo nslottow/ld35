@@ -18,6 +18,16 @@ class Level {
 	static var tiles_x:Int;
 	static var tiles_y:Int;
 
+	public static function destroy() {
+		if (scene != null) {
+			scene.empty();
+		}
+
+		if (tiled_map != null) {
+			tiled_map.destroy();
+		}
+	}
+
 	public static function load_json(json_str:String) {
 		if (scene == null) {
 			scene = new Scene('level');

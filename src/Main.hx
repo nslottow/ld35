@@ -13,6 +13,7 @@ class Main extends luxe.Game {
 
 	public static var background:Sprite;
 	public static var background_color:Color = new Color(0.2, 0.2, 0.2);
+	public static var states:StateManager;
 
 	override function config(config:luxe.AppConfig) {
 		config.preload = {
@@ -31,6 +32,7 @@ class Main extends luxe.Game {
 	}
 
 	override function ready() {
+		// Setup the viewport
 		Luxe.camera.size = screen_size_points;
         Luxe.camera.size_mode = luxe.Camera.SizeMode.fit;
 
@@ -41,11 +43,6 @@ class Main extends luxe.Game {
 			no_scene: true
 		});
 
-		// Load the default map
-		var map_id = 'assets/maps/test_00.json';
-		trace('Loading tiled map: $map_id');
-		Level.load_json(Luxe.resources.text(map_id).asset.text);
-		
 		// Setup the debug toolbar
 #if !release
 		var map_file_input = js.Browser.document.getElementById('map-file-input');
@@ -62,6 +59,15 @@ class Main extends luxe.Game {
 			}
 		});
 #end
+
+		// Setup the game states
+		states = new StateManager();
+		states.add(new states.Title({name: 'title'}));
+		states.add(new states.LevelSelect({name: 'level_select'}));
+		states.add(new states.Play({name: 'play'}));
+
+		// TODO: In debug mode, set the starting state to the default specified by browser local storage
+		states.set('play');
 	}
 }
 
