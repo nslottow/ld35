@@ -34,6 +34,12 @@
 				Load Map: 
 				<input type="file" id="map-file-input" accept=".json"/>
 			</div>
+			<div>
+				Select State:
+				<select id="state-selector-dropdown">
+				</select>
+				<button id="set-default-state-button">Set Default</button>
+			</div>
 		</div>
 		{{/if}}
 		{{#if project.app.web.live_reload '!==' false}}
