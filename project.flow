@@ -41,7 +41,8 @@
     release: {
       app: {
         web: {
-          live_reload: false
+          live_reload: false,
+		  debug_toolbar: false
         }
       }
     }
