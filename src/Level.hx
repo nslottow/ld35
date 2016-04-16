@@ -2,10 +2,13 @@ package;
 
 import luxe.Scene;
 import luxe.Entity;
+import luxe.Vector;
 import luxe.Log.*;
 
 import luxe.tilemaps.Tilemap;
 import luxe.importers.tiled.TiledMap;
+
+import entities.*;
 
 class Level {
 	public static var tile_width:Float;
@@ -82,12 +85,39 @@ class Level {
 			}
 		}
 
-		// Instantiate objects into the level's scene
+		// TODO: Instantiate objects into the level's scene
+		var random = Luxe.utils.random;
+		var units:Array<PlayerUnit> = [];
+		for (i in 0...9) {
+			var unit = new PlayerUnit({
+				scene: scene,
+				size: new Vector(tile_width, tile_height),
+				depth: 100
+			});
+
+			var dest_tile = get_tile(random.int(tiles_x), random.int(tiles_y));
+			unit.tile_movement.move_to(dest_tile.x, dest_tile.y, false);
+
+			units.push(unit);
+		}
+
+		// Activate a random number of units
+		var active_count = Math.floor(Math.max(1, random.int(units.length)));
+		for (i in 0...active_count) {
+			units[i].controller = PlayerController.instance;
+		}
 	}
 
 	/** Returns the tile with tile coordinate (x, y) or null */
 	public static inline function get_tile(x:Int, y:Int) {
+		if (x < 0 || x >= tiles_x || y < 0 || y >= tiles_y) {
+			return null;
+		}
 		return tiles[y * tiles_x + x];
+	}
+
+	public static function get_tile_pos(x:Int, y:Int):Vector {
+		return tiled_map.tile_pos(x, y, tile_scale);
 	}
 }
 
