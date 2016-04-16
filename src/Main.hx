@@ -16,6 +16,8 @@ class Main extends luxe.Game {
 	public static var background:Sprite;
 	public static var background_color:Color = new Color(0.2, 0.2, 0.2);
 
+	public static var tiled_map:TiledMap;
+
 	override function config(config:luxe.AppConfig) {
 		config.preload = {
 			textures: [
@@ -43,12 +45,40 @@ class Main extends luxe.Game {
 			no_scene: true
 		});
 
+		// Load the default map
 		var map_id = 'assets/maps/test_00.json';
 		trace('Loading tiled map: $map_id');
+		load_map_json(Luxe.resources.text(map_id).asset.text);
+		
+		// Setup the debug toolbar
+#if !release
+		trace('setting up debug toolbar');
 
-		var tiled_map = new TiledMap({
+		var map_file_input = js.Browser.document.getElementById('map-file-input');
+		map_file_input.addEventListener('change', function(change_evt) {
+			var file:js.html.File = change_evt.target.files[0];
+			if (file != null) {
+				var file_reader = new js.html.FileReader();
+				file_reader.onload = function(load_evt) {
+					var contents:String = load_evt.target.result;
+					load_map_json(contents);
+					trace('loaded map from file: ${file.name}');
+				};
+				file_reader.readAsText(file);
+			}
+		});
+#end
+	}
+
+	static function load_map_json(json_str:String) {
+		if (tiled_map != null) {
+			// Destroy the old map
+			tiled_map.destroy();
+		}
+
+		tiled_map = new TiledMap({
 			asset_path: 'assets/maps',
-			tiled_file_data: Luxe.resources.text(map_id).asset.text,
+			tiled_file_data: json_str,
 			format: 'json',
 		});
 
@@ -58,11 +88,6 @@ class Main extends luxe.Game {
 			scale: scale
 		});
 		trace('tile width = ${tiled_map.tile_width}, map scale = $scale, scaled tile width = ${tiled_map.tile_width * scale}');
-
-		var layer = tiled_map.layers_ordered[0];
-		var tile = layer.tiles[0][0];
-
-		tile.id = 0;
 	}
 }
 
