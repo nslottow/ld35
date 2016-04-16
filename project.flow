@@ -1,0 +1,49 @@
+{
+  luxe: {
+    window: {
+      width: 375,
+      height: 667,
+      title: 'ld35',
+      fullscreen: true
+    }
+  },
+
+  project: {
+    name: 'ld35',
+    version: '1.0.0',
+    author: 'us',
+
+    app: {
+      name: 'ld35',
+      package: 'com.nslottow.ld35'
+    },
+
+    build: {
+      dependencies: {
+        luxe: '*'
+      },
+      defines: ['luxe_no_shader_prefix'],
+      flags: ['--times', '--connect 6000'],
+    },
+
+    files: {
+      assets: 'assets/',
+      config: 'pkg/web/config.json => config.json',
+      index: {
+        path: 'pkg/web/index.hbs => index.html',
+        template: 'project',
+        not_listed: true
+      }
+    }
+  },
+
+  if: {
+    release: {
+      app: {
+        web: {
+          live_reload: false
+        }
+      }
+    }
+  }
+}
