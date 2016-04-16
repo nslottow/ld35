@@ -3,6 +3,8 @@ package entities;
 import luxe.Entity;
 import luxe.Input;
 
+import components.TileMovement;
+
 class PlayerController extends Entity {
 	public static var instance:PlayerController;
 
@@ -35,10 +37,75 @@ class PlayerController extends Entity {
 		}
 
 		if (dx != 0 || dy != 0) {
+			// Find any push moves and apply those first
+
+			// TODO: This won't quite work if a pushable entity is sandwiched by two player units,
+			// but we'll fix that later. The fix is just to build a list of all moves (including pushes)
+			// before carrying out any.
 			for (unit in units) {
+				var tile_movement = unit.tile_movement;
+				var dest_tile = Level.get_tile(tile_movement.x + dx, tile_movement.y + dy);
+				if (dest_tile != null) {
+					var push_chain:Array<TileMovement> = get_push_chain(dest_tile, dx, dy);
+
+					// Try to apply pushes in the direction of movement
+					while (true) {
+						var to_push = push_chain.pop();
+						if (to_push == null) {
+							break;
+						} else {
+							to_push.move(dx, dy);
+						}
+					}
+				}
+			}
+
+			// Sort moves along the axis of movement
+			var to_move = units.copy();
+
+			var sort_by_x = function(a:PlayerUnit, b:PlayerUnit):Int {
+				return (a.tile_movement.x - b.tile_movement.x) * -dx;
+			};
+
+			var sort_by_y = function(a:PlayerUnit, b:PlayerUnit):Int {
+				return (a.tile_movement.y - b.tile_movement.y) * -dy;
+			};
+
+			var sort_func = dx != 0 ? sort_by_x : sort_by_y;
+			to_move.sort(sort_func);
+
+			for (unit in to_move) {
 				unit.tile_movement.move(dx, dy);
 			}
 		}
+	}
+
+	function get_push_chain(start_tile:Level.Tile, dx:Int, dy:Int):Array<TileMovement> {
+		// Attempt to push whatever is currently on the start tile and in all adjacent tiles in the direction of movement
+		// i.e. DFS for last pushable thing
+		// TODO: The naming in this algorithm could be more straight-forward
+
+		var push_chain:Array<TileMovement> = [];
+		var cur_tile = start_tile;
+
+		while (cur_tile != null) {
+			var pushed_cur_tile = false;
+			for (entity in cur_tile.entities) {
+				var push_target:TileMovement = entity.get('tile_movement');
+				if (push_target != null && push_target.pushable) {
+					push_chain.push(push_target);
+					pushed_cur_tile = true;
+				}
+			}
+
+			if (pushed_cur_tile) {
+				cur_tile = Level.get_tile(cur_tile.x + dx, cur_tile.y + dy);
+			} else {
+				break;
+			}
+		}
+
+		return push_chain;
 	}
 }
 
