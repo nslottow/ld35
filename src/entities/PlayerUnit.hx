@@ -1,5 +1,6 @@
 package entities;
 
+import luxe.Entity;
 import luxe.Sprite;
 import luxe.Vector;
 import luxe.Color;
@@ -21,6 +22,8 @@ class PlayerUnit extends Sprite {
 		super(_options);
 		
 		tile_movement = add(new TileMovement({name: 'tile_movement'}));
+
+		events.listen('bumped_by', on_bumped_by);
 	}
 
 	override function ondestroy() {
@@ -30,15 +33,23 @@ class PlayerUnit extends Sprite {
 		}
 	}
 
+	function on_bumped_by(other:Entity) {
+		if (controller == null && Std.is(other, PlayerUnit)) {
+			var other_unit:PlayerUnit = cast other;
+			controller = other_unit.controller;
+		}
+	}
+
 	public function set_controller(_controller:PlayerController) {
-		controller = _controller;
 		if (_controller != null) {
-			_controller.units.push(this);
+			if (controller != _controller) {
+				_controller.units.push(this);
+			}
 			color = active_color;
 		} else {
 			color = inactive_color;
 		}
-		return _controller;
+		return controller = _controller;
 	}
 }
 

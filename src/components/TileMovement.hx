@@ -4,6 +4,8 @@ import luxe.Component;
 
 import luxe.tween.Actuate;
 
+import entities.PlayerUnit;
+
 class TileMovement extends Component {
 	public var x:Int = -1;
 	public var y:Int = -1;
@@ -20,6 +22,11 @@ class TileMovement extends Component {
 
 		if (dest_tile.entities.length > 0) {
 			// TODO: bump animation
+			for (other_entity in dest_tile.entities) {
+				entity.events.fire('bumped_into', other_entity);
+				other_entity.events.fire('bumped_by', entity);
+			}
+
 			return;
 		}
 

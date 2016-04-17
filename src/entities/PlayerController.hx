@@ -2,6 +2,7 @@ package entities;
 
 import luxe.Entity;
 import luxe.Input;
+import luxe.Log.*;
 
 import components.TileMovement;
 
@@ -42,6 +43,7 @@ class PlayerController extends Entity {
 			// TODO: This won't quite work if a pushable entity is sandwiched by two player units,
 			// but we'll fix that later. The fix is just to build a list of all moves (including pushes)
 			// before carrying out any.
+
 			for (unit in units) {
 				var tile_movement = unit.tile_movement;
 				var dest_tile = Level.get_tile(tile_movement.x + dx, tile_movement.y + dy);
