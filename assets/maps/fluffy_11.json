@@ -1,8 +1,8 @@
-{ "height":11,
+{ "height":9,
  "layers":[
         {
-         "data":[4, 3, 11, 4, 4, 4, 4, 4, 3, 4, 3, 11, 4, 4, 4, 4, 4, 3, 4, 3, 8, 4, 4, 4, 4, 4, 3, 4, 4, 4, 4, 4, 4, 4, 12, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 10, 10, 10, 4, 4, 4, 4, 12, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 12, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 12, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
-         "height":11,
+         "data":[4, 12, 4, 4, 4, 4, 4, 3, 3, 4, 4, 4, 11, 4, 11, 4, 11, 3, 4, 12, 12, 7, 4, 11, 4, 11, 4, 4, 12, 4, 4, 4, 11, 4, 11, 4, 4, 12, 4, 9, 10, 7, 4, 11, 4, 4, 12, 4, 11, 4, 4, 4, 4, 4, 4, 12, 4, 4, 4, 9, 4, 10, 10, 4, 12, 4, 10, 10, 7, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 11, 4],
+         "height":9,
          "name":"static",
          "opacity":1,
          "type":"tilelayer",
@@ -19,7 +19,7 @@
                 {
                  "gid":1,
                  "height":128,
-                 "id":25,
+                 "id":30,
                  "name":"blob",
                  "properties":
                     {
@@ -34,92 +34,32 @@
                  "visible":true,
                  "width":128,
                  "x":0,
+                 "y":256
+                }, 
+                {
+                 "gid":2,
+                 "height":128,
+                 "id":41,
+                 "name":"left",
+                 "properties":
+                    {
+                     "face":"left"
+                    },
+                 "propertytypes":
+                    {
+                     "face":"string"
+                    },
+                 "rotation":0,
+                 "type":"Gunman",
+                 "visible":true,
+                 "width":128,
+                 "x":384,
                  "y":896
                 }, 
                 {
                  "gid":1,
                  "height":128,
-                 "id":27,
-                 "name":"blob2",
-                 "properties":
-                    {
-                     "active":true
-                    },
-                 "propertytypes":
-                    {
-                     "active":"bool"
-                    },
-                 "rotation":0,
-                 "type":"PlayerUnit",
-                 "visible":true,
-                 "width":128,
-                 "x":0,
-                 "y":1280
-                }, 
-                {
-                 "gid":1,
-                 "height":128,
-                 "id":29,
-                 "name":"blob2",
-                 "properties":
-                    {
-                     "active":true
-                    },
-                 "propertytypes":
-                    {
-                     "active":"bool"
-                    },
-                 "rotation":0,
-                 "type":"PlayerUnit",
-                 "visible":true,
-                 "width":128,
-                 "x":0,
-                 "y":1024
-                }, 
-                {
-                 "gid":1,
-                 "height":128,
-                 "id":30,
-                 "name":"blob2",
-                 "properties":
-                    {
-                     "active":true
-                    },
-                 "propertytypes":
-                    {
-                     "active":"bool"
-                    },
-                 "rotation":0,
-                 "type":"PlayerUnit",
-                 "visible":true,
-                 "width":128,
-                 "x":0,
-                 "y":1408
-                }, 
-                {
-                 "gid":1,
-                 "height":128,
-                 "id":35,
-                 "name":"blob2",
-                 "properties":
-                    {
-                     "active":true
-                    },
-                 "propertytypes":
-                    {
-                     "active":"bool"
-                    },
-                 "rotation":0,
-                 "type":"PlayerUnit",
-                 "visible":true,
-                 "width":128,
-                 "x":0,
-                 "y":1152
-                }, 
-                {
-                 "gid":1,
-                 "height":128,
-                 "id":36,
+                 "id":44,
                  "name":"blob2",
                  "properties":
                     {
@@ -134,13 +74,73 @@
                  "visible":true,
                  "width":128,
                  "x":1024,
+                 "y":1152
+                }, 
+                {
+                 "gid":1,
+                 "height":128,
+                 "id":45,
+                 "name":"blob",
+                 "properties":
+                    {
+                     "active":true
+                    },
+                 "propertytypes":
+                    {
+                     "active":"bool"
+                    },
+                 "rotation":0,
+                 "type":"PlayerUnit",
+                 "visible":true,
+                 "width":128,
+                 "x":0,
                  "y":128
                 }, 
                 {
                  "gid":2,
                  "height":128,
-                 "id":37,
-                 "name":"down",
+                 "id":46,
+                 "name":"up",
+                 "properties":
+                    {
+                     "face":"up"
+                    },
+                 "propertytypes":
+                    {
+                     "face":"string"
+                    },
+                 "rotation":0,
+                 "type":"Gunman",
+                 "visible":true,
+                 "width":128,
+                 "x":768,
+                 "y":896
+                }, 
+                {
+                 "gid":2,
+                 "height":128,
+                 "id":47,
+                 "name":"up",
+                 "properties":
+                    {
+                     "face":"up"
+                    },
+                 "propertytypes":
+                    {
+                     "face":"string"
+                    },
+                 "rotation":0,
+                 "type":"Gunman",
+                 "visible":true,
+                 "width":128,
+                 "x":512,
+                 "y":256
+                }, 
+                {
+                 "gid":2,
+                 "height":128,
+                 "id":48,
+                 "name":"up",
                  "properties":
                     {
                      "face":"down"
@@ -153,8 +153,8 @@
                  "type":"Gunman",
                  "visible":true,
                  "width":128,
-                 "x":896,
-                 "y":256
+                 "x":1024,
+                 "y":640
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -163,7 +163,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":38,
+ "nextobjectid":49,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tileheight":128,
