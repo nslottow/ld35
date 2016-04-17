@@ -91,16 +91,19 @@ typedef GunmanOptions = {
 			while (true) {
 				tile = Level.get_tile(tile.x + dx, tile.y + dy);
 				if (tile == null || tile.solid) {
+					//trace('gunman not shooting cause it saw solid or null tile');
 					return;
 				}
 
 				for (entity in tile.entities) {
 					var tile_movement = entity.get('tile_movement');
-					if (!tile_movement.walkable) {
+					if (!tile_movement.walkable && !Std.is(entity, PlayerUnit)) {
+						//trace('gunman not shooting cause it saw unwalkable tile');
 						return;
 					}
 
 					if (Std.is(entity, Gunman)) {
+						//trace('gunman not shooting cause it saw gunman');
 						return;
 					}
 				}
