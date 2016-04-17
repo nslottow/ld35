@@ -22,8 +22,6 @@ class Level {
 	static var tiles_x:Int;
 	static var tiles_y:Int;
 
-	static var movable_entities:Array<TileMovement>;
-
 	public static function destroy() {
 		if (scene != null) {
 			scene.empty();
@@ -90,21 +88,13 @@ class Level {
 
 		// Mark solid static tiles as solid
 		var static_layer = tiled_map.layers_ordered[0];
-		var static_tileset = tiled_map.tiledmap_data.tilesets[0];
-
-		trace('tile_ids with properties:');
-		for (i in static_tileset.property_tiles.keys()) {
-			trace('  $i');
-		}
+		var static_tileset = data.tilesets[0];
 
 		if (static_layer != null && static_tileset != null) {
 			trace('checking for solid tiles');
 			for (tile in tiles) {
 				var tile_id = static_layer.tiles[tile.y][tile.x].id - 1;
 				var tile_props = static_tileset.property_tiles.get(tile_id);
-				if (tile.x == 1 && tile.y == 9) {
-					trace('tile_id at (${tile.x}, ${tile.y}) = $tile_id');
-				}
 				if (tile_props != null) {
 					if (tile_props.properties.get('solid') == 'true') {
 						tile.solid = true;
@@ -113,8 +103,33 @@ class Level {
 			}
 		}
 
-		// TODO: Instantiate objects into the level's scene
-		movable_entities = [];
+		// Instantiate objects into the level's scene
+		for (object_group in data.object_groups) {
+			for (object in object_group.objects) {
+				var tile_x = Math.floor(object.pos.x / data.tile_width);
+				var tile_y = Math.floor(object.pos.y / data.tile_height) - 1;
+				//var world_pos = new Vector(tile_x * tile_scale, tile_y * tile_scale);
+
+				var type_name = object.type;
+				var cls = Type.resolveClass('entities.$type_name');
+				if (cls != null) {
+					trace('creating "$type_name" at ($tile_x, $tile_y)');
+					var instance:Entity = cast Type.createInstance(cls, [{
+						scene: scene,
+						size: new Vector(tile_width, tile_height),
+						centered: false,
+						depth: 3
+					}]);
+
+					var tile_movement:TileMovement = cast instance.get('tile_movement');
+					if (tile_movement != null) {
+						tile_movement.move_to(tile_x, tile_y, false);
+					}
+				} else {
+					trace('warning: failed to instantiate object of type "$type_name" at ($tile_x, $tile_y)');
+				}
+			}
+		}
 
 		// For now we're just creating a random smattering of units, some inactive
 		var random = Luxe.utils.random;
@@ -135,7 +150,6 @@ class Level {
 			unit.tile_movement.move_to(dest_tile.x, dest_tile.y, false);
 
 			units.push(unit);
-			movable_entities.push(unit.tile_movement);
 		}
 
 		// Activate a random number of units
