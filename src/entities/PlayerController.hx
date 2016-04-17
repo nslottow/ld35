@@ -79,6 +79,52 @@ class PlayerController extends Entity {
 			for (unit in to_move) {
 				unit.tile_movement.move(dx, dy);
 			}
+
+			Level.update_tile_state();
+			build_groups();
+		}
+	}
+
+	public function build_groups() {
+		// Check for entities falling into an abyss
+		var group_id = 0;
+		var unvisited_units = units.copy();
+		for (unit in units) {
+			if (unvisited_units.indexOf(unit) != -1) {
+				unvisited_units.remove(unit);
+				group_id++;
+
+				var group:Array<PlayerUnit> = [unit];
+				var grounded = !unit.tile_movement.tile.abyss; // is at least one unit in the group over solid ground?
+				unit.group = group;
+				unit.group_id = group_id;
+
+				var frontier:Array<Level.Tile> = unit.tile_movement.tile.neighbors.copy();
+				while (frontier.length > 0) {
+					var tile = frontier.pop();
+					if (tile != null && tile.active_unit != null && unvisited_units.indexOf(tile.active_unit) != -1) {
+						unvisited_units.remove(tile.active_unit);
+
+						group.push(tile.active_unit);
+						tile.active_unit.group = group;
+						tile.active_unit.group_id = group_id;
+
+						if (!tile.abyss) {
+							grounded = true;
+						}
+
+						for (n in tile.neighbors) {
+							frontier.push(n);
+						}
+					}
+				}
+
+				if (!grounded) {
+					for (u in group) {
+						u.events.fire('entered_abyss');
+					}
+				}
+			}
 		}
 	}
 

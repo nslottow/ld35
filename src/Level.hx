@@ -89,15 +89,21 @@ class Level {
 		// Mark solid static tiles as solid
 		var static_layer = tiled_map.layers_ordered[0];
 		var static_tileset = data.tilesets[0];
+		var elevator_tiles:Array<Tile> = [];
 
 		if (static_layer != null && static_tileset != null) {
-			trace('checking for solid tiles');
 			for (tile in tiles) {
 				var tile_id = static_layer.tiles[tile.y][tile.x].id - 1;
 				var tile_props = static_tileset.property_tiles.get(tile_id);
 				if (tile_props != null) {
-					if (tile_props.properties.get('solid') == 'true') {
+					var properties = tile_props.properties;
+					if (properties.get('solid') == true) {
 						tile.solid = true;
+					} else if (properties.get('abyss') == true) {
+						tile.abyss = true;
+					} else if (properties.get('elevator') == true) {
+						tile.elevator = true;
+						elevator_tiles.push(tile);
 					}
 				}
 			}
@@ -114,15 +120,28 @@ class Level {
 				var cls = Type.resolveClass('entities.$type_name');
 				if (cls != null) {
 					trace('creating "$type_name" at ($tile_x, $tile_y)');
-					var instance:Entity = cast Type.createInstance(cls, [{
+
+					var options = {
 						scene: scene,
 						size: new Vector(tile_width, tile_height),
 						centered: false,
 						depth: 3
-					}]);
+					};
 
+					var obj_props = object.properties;
+					for (key in obj_props.keys()) {
+						var value = obj_props.get(key);
+						var type = Type.typeof(value);
+						trace('  $key($type) : $value');
+
+						Reflect.setField(options, key, value);
+					}
+
+					var instance:Entity = cast Type.createInstance(cls, [options]);
+					
 					var tile_movement:TileMovement = cast instance.get('tile_movement');
 					if (tile_movement != null) {
+						trace('$type_name at ($tile_x,$tile_y) has TileMovement component');
 						tile_movement.move_to(tile_x, tile_y, false);
 					}
 				} else {
@@ -131,31 +150,22 @@ class Level {
 			}
 		}
 
-		// For now we're just creating a random smattering of units, some inactive
-		var random = Luxe.utils.random;
-		var units:Array<PlayerUnit> = [];
+		update_tile_state();
+		PlayerController.instance.build_groups();
+	}
 
-		var available_tiles = tiles.copy();
-		// TODO: Remove solid tiles
-
-		for (i in 0...9) {
-			var unit = new PlayerUnit({
-				scene: scene,
-				size: new Vector(tile_width, tile_height),
-				depth: 100
-			});
-
-			var dest_tile = available_tiles[random.int(available_tiles.length)];
-			available_tiles.remove(dest_tile);
-			unit.tile_movement.move_to(dest_tile.x, dest_tile.y, false);
-
-			units.push(unit);
-		}
-
-		// Activate a random number of units
-		var active_count = Math.floor(Math.max(1, random.int(units.length)));
-		for (i in 0...active_count) {
-			units[i].controller = PlayerController.instance;
+	public static function update_tile_state() {
+		// Update tile state
+		for (tile in tiles) {
+			tile.active_unit = null;
+			for (entity in tile.entities) {
+				if (Std.is(entity, PlayerUnit)) {
+					var unit:PlayerUnit = cast entity;
+					if (unit.controller != null) {
+						tile.active_unit = unit;
+					}
+				}
+			}
 		}
 	}
 
@@ -177,9 +187,15 @@ class Tile {
 	public var y(default, null):Int;
 
 	public var solid:Bool = false;
+	public var abyss:Bool = false;
+	public var elevator:Bool = false;
+
+	public var has_unit:Bool = false;
 	
 	/** Entities on this tile */
 	public var entities:Array<Entity> = [];
+
+	public var active_unit:PlayerUnit;
 
 	public var neighbors:Array<Tile>;
 
