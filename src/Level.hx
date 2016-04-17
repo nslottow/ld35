@@ -9,6 +9,7 @@ import luxe.tilemaps.Tilemap;
 import luxe.importers.tiled.TiledMap;
 
 import entities.*;
+import components.TileMovement;
 
 class Level {
 	public static var tile_width:Float;
@@ -20,6 +21,8 @@ class Level {
 	static var tiles:Array<Tile>;
 	static var tiles_x:Int;
 	static var tiles_y:Int;
+
+	static var movable_entities:Array<TileMovement>;
 
 	public static function destroy() {
 		if (scene != null) {
@@ -86,8 +89,14 @@ class Level {
 		}
 
 		// TODO: Instantiate objects into the level's scene
+		movable_entities = [];
+
+		// For now we're just creating a random smattering of units, some inactive
 		var random = Luxe.utils.random;
 		var units:Array<PlayerUnit> = [];
+
+		var available_tiles = tiles.copy();
+
 		for (i in 0...9) {
 			var unit = new PlayerUnit({
 				scene: scene,
@@ -95,10 +104,12 @@ class Level {
 				depth: 100
 			});
 
-			var dest_tile = get_tile(random.int(tiles_x), random.int(tiles_y));
+			var dest_tile = available_tiles[random.int(available_tiles.length)];
+			available_tiles.remove(dest_tile);
 			unit.tile_movement.move_to(dest_tile.x, dest_tile.y, false);
 
 			units.push(unit);
+			movable_entities.push(unit.tile_movement);
 		}
 
 		// Activate a random number of units
@@ -125,6 +136,8 @@ class Tile {
 	public var x(default, null):Int;
 	public var y(default, null):Int;
 
+	public var solid:Bool = false;
+	
 	/** Entities on this tile */
 	public var entities:Array<Entity> = [];
 
