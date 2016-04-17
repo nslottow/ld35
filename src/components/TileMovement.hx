@@ -38,6 +38,7 @@ class TileMovement extends Component {
 				other_entity.events.fire('bumped_by', entity);
 
 				// TODO: This is a kind of confusing way to distinguish between walkable and not
+				// I might stil use this for enemies though
 				var other_movement:TileMovement = other_entity.get('tile_movement');
 				if (other_movement == null || !other_movement.walkable) {
 					move_blocked = true;

@@ -2,6 +2,7 @@ package entities;
 
 import luxe.Entity;
 import luxe.Sprite;
+import luxe.Text;
 import luxe.Vector;
 import luxe.Color;
 
@@ -10,12 +11,16 @@ import components.*;
 class PlayerUnit extends Sprite {
 	public var controller(default, set):PlayerController;
 	public var tile_movement:TileMovement;
+	public var group:Array<PlayerUnit>;
+	public var group_id(default, set):Int = 0;
 	
 	public static var active_color = new Color(0.7, 0.1, 0.7, 0.8);
 	public static var inactive_color = new Color(0.3, 0.0, 0.3, 0.8);
 	public static var destruct_color = new Color(0.9, 0.3, 0.1, 0.5);
 
 	public var destructing:Bool = false;
+
+	var group_id_text:Text;
 
 	public override function new(?_options:luxe.options.SpriteOptions) {
 		// TMP: Make a tinted purple box
@@ -25,6 +30,16 @@ class PlayerUnit extends Sprite {
 		super(_options);
 		
 		tile_movement = add(new TileMovement({name: 'tile_movement'}));
+		group = [this];
+
+		group_id_text = new Text({
+			point_size: 12,
+			parent: this,
+			align: TextAlign.center,
+			pos: new Vector(size.x * 0.5, size.y * 0.5),
+			depth: 200,
+			text: Std.string(group_id)
+		});
 
 		events.listen('bumped_by', on_bumped_by);
 		events.listen('entered_abyss', on_entered_abyss);
@@ -67,6 +82,16 @@ class PlayerUnit extends Sprite {
 			color = inactive_color;
 		}
 		return controller = _controller;
+	}
+
+	public function set_group_id(_group_id:Int) {
+		if (_group_id != 0) {
+			group_id_text.text = Std.string(_group_id);
+			//group_id_text.visible = true;
+		} else {
+			//group_id_text.visible = false;
+		}
+		return group_id = _group_id;
 	}
 }
 

@@ -89,14 +89,21 @@ class Level {
 		// Mark solid static tiles as solid
 		var static_layer = tiled_map.layers_ordered[0];
 		var static_tileset = data.tilesets[0];
+		var elevator_tiles:Array<Tile> = [];
 
 		if (static_layer != null && static_tileset != null) {
 			for (tile in tiles) {
 				var tile_id = static_layer.tiles[tile.y][tile.x].id - 1;
 				var tile_props = static_tileset.property_tiles.get(tile_id);
 				if (tile_props != null) {
-					if (tile_props.properties.get('solid') == 'true') {
+					var properties = tile_props.properties;
+					if (properties.get('solid') != null) {
 						tile.solid = true;
+					} else if (properties.get('abyss') != null) {
+						tile.abyss = true;
+					} else if (properties.get('elevator') != null) {
+						tile.elevator = true;
+						elevator_tiles.push(tile);
 					}
 				}
 			}
@@ -156,6 +163,24 @@ class Level {
 		for (i in 0...active_count) {
 			units[i].controller = PlayerController.instance;
 		}
+
+		update_tile_state();
+		PlayerController.instance.build_groups();
+	}
+
+	public static function update_tile_state() {
+		// Update tile state
+		for (tile in tiles) {
+			tile.active_unit = null;
+			for (entity in tile.entities) {
+				if (Std.is(entity, PlayerUnit)) {
+					var unit:PlayerUnit = cast entity;
+					if (unit.controller != null) {
+						tile.active_unit = unit;
+					}
+				}
+			}
+		}
 	}
 
 	/** Returns the tile with tile coordinate (x, y) or null */
@@ -176,9 +201,15 @@ class Tile {
 	public var y(default, null):Int;
 
 	public var solid:Bool = false;
+	public var abyss:Bool = false;
+	public var elevator:Bool = false;
+
+	public var has_unit:Bool = false;
 	
 	/** Entities on this tile */
 	public var entities:Array<Entity> = [];
+
+	public var active_unit:PlayerUnit;
 
 	public var neighbors:Array<Tile>;
 
