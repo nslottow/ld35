@@ -10,19 +10,16 @@ import snow.types.Types.AudioState;
 import luxe.utils.Maths;
 
 /**
-3 audio players at any given time
-	currently playing e-level
-	next energy level cued up
-	every 24 seconds, swap players
-	next level's first energy level should be playing muted to keep it in sync
-		on the elevator, fade 
-		
+	change energy level
+		choose base +- 1 mod 7
+		killing at gunman
+		picking up blobs
 
 
-	2 players per music instance because they have a tail
-
-	trigger the next thing every 24 seconds
-		whether it be the next energy or the next song
+	TODO: choose the next energy = current +- 1 mod 7
+	TODO: choose the next motif randomly
+			when there is no next motif, and when we switch to the next motif
+	TODO: ability to trigger next motif or next energy, which causes
 **/
 class Music {
 	public static var current_energy:MusicInstance;
@@ -35,7 +32,7 @@ class Music {
 	public static var transition_next_loop:Bool = false;
 
 	public static inline var loop_length_seconds:Float = 24;
-	public static inline var fade_length_seconds:Float = 3;
+	public static inline var fade_length_seconds:Float = 2;
 	public static inline var fade_steps:Int = 30;
 	public static inline var fade_timer_interval:Float = fade_length_seconds / fade_steps;
 
@@ -43,10 +40,12 @@ class Music {
 	static var loop_timer:snow.api.Timer;
 	static var fade_timer:snow.api.Timer;
 	static var fade_start_time:Float;
+	static var on_fade_complete:Void->Void;
 
 	public static function init() {
-		load_parcel('active', 1, 1);
-		load_parcel('next', 2, 1);
+		load_parcel('current_energy', 1, 2);
+		load_parcel('next_energy', 1, 3);
+		load_parcel('next_motif', 2, 1);
 	}
 
 	public static function load_parcel(target:String, motif:Int, energy:Int) {
@@ -130,6 +129,16 @@ class Music {
 			fade_from = current_energy;
 			fade_start_time = snow.Snow.timestamp;
 			fade_timer = Luxe.timer.schedule(fade_timer_interval, fade_handler, true);
+			on_fade_complete = function() {
+				var old = current_energy;
+				current_energy = next_energy;
+
+				// throw out the music that is totally faded out
+				Luxe.audio.stop(old.active_handle);
+				Luxe.audio.stop(old.inactive_handle);
+
+				// start loading the next
+			}
 		}
 	}
 
@@ -137,8 +146,9 @@ class Music {
 		var elapsed_time = snow.Snow.timestamp - fade_start_time;
 		var t = Maths.clamp(elapsed_time / fade_length_seconds, 0, 1);
 
-		var fade_to_volume = t;
-		var fade_from_volume = 1.0 - t;
+		var pi = 3.1415;
+		var fade_from_volume = (Math.cos(t * pi) + 1.0) * 0.5;
+		var fade_to_volume = (Math.cos((1.0 - t) * pi) + 1.0) * 0.5;
 
 		trace('elapsed: $elapsed_time, t: $t, fade_to_volume: $fade_to_volume, fade_from_volume: $fade_from_volume');
 
@@ -150,6 +160,9 @@ class Music {
 
 		if (elapsed_time >= fade_length_seconds) {
 			fade_timer.stop();
+			if (on_fade_complete != null) {
+				on_fade_complete();
+			}
 		}
 	}
 
