@@ -88,6 +88,31 @@ class Level {
 			}
 		}
 
+		// Mark solid static tiles as solid
+		var static_layer = tiled_map.layers_ordered[0];
+		var static_tileset = tiled_map.tiledmap_data.tilesets[0];
+
+		trace('tile_ids with properties:');
+		for (i in static_tileset.property_tiles.keys()) {
+			trace('  $i');
+		}
+
+		if (static_layer != null && static_tileset != null) {
+			trace('checking for solid tiles');
+			for (tile in tiles) {
+				var tile_id = static_layer.tiles[tile.y][tile.x].id - 1;
+				var tile_props = static_tileset.property_tiles.get(tile_id);
+				if (tile.x == 1 && tile.y == 9) {
+					trace('tile_id at (${tile.x}, ${tile.y}) = $tile_id');
+				}
+				if (tile_props != null) {
+					if (tile_props.properties.get('solid') == 'true') {
+						tile.solid = true;
+					}
+				}
+			}
+		}
+
 		// TODO: Instantiate objects into the level's scene
 		movable_entities = [];
 
@@ -96,6 +121,7 @@ class Level {
 		var units:Array<PlayerUnit> = [];
 
 		var available_tiles = tiles.copy();
+		// TODO: Remove solid tiles
 
 		for (i in 0...9) {
 			var unit = new PlayerUnit({

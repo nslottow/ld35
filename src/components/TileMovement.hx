@@ -16,7 +16,7 @@ class TileMovement extends Component {
 
 	public function move_to(_x:Int, _y:Int, ?_animate:Bool=true) {
 		dest_tile = Level.get_tile(_x, _y);
-		if (dest_tile == null) {
+		if (dest_tile == null || dest_tile.solid) {
 			return;
 		}
 

@@ -21,10 +21,10 @@ class Main extends luxe.Game {
 				{ id: 'assets/maps/tilesets/8x8_dungeon.png' },
 				{ id: 'assets/maps/tilesets/top_down_dungeon.png' },
 				{ id: 'assets/maps/tilesets/packer_test.png' },
+				{ id: 'assets/maps/tilesets/env.png' },
 			],
 			texts: [
-				{ id: 'assets/maps/test_00.json' },
-				{ id: 'assets/maps/test_01.json' },
+				{ id: 'assets/maps/env_test_00.json' }, // default map
 			]
 		};
 
