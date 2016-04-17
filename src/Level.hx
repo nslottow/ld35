@@ -202,6 +202,7 @@ class Level {
 	}
 
 	public static function tick() {
+		trace('level tick');
 		events.fire('tick');
 	}
 
