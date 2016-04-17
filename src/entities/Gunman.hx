@@ -55,6 +55,9 @@ typedef GunmanOptions = {
 
 	function on_bumped_by(other:Entity) {
 		if (Std.is(other, PlayerUnit)) {
+			// Deactivate this gunman so it doesn't shoot on the tick it dies
+			active = false;
+
 			// TODO: destroy this after the current tick properly
 			Luxe.timer.schedule(0.1, function() {
 				destroy();
@@ -87,9 +90,21 @@ typedef GunmanOptions = {
 			var tile = tile_movement.tile;
 			while (true) {
 				tile = Level.get_tile(tile.x + dx, tile.y + dy);
-				if (tile == null) {
+				if (tile == null || tile.solid) {
 					return;
 				}
+
+				for (entity in tile.entities) {
+					var tile_movement = entity.get('tile_movement');
+					if (!tile_movement.walkable) {
+						return;
+					}
+
+					if (Std.is(entity, Gunman)) {
+						return;
+					}
+				}
+
 				var active_unit = tile.active_unit;
 				if (active_unit != null) {
 					active_unit.destructing = true;

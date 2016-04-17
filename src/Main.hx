@@ -48,6 +48,7 @@ class Main extends luxe.Game {
 		states.add(new states.Title({name: 'title'}));
 		states.add(new states.LevelSelect({name: 'level_select'}));
 		states.add(new states.Play({name: 'play'}));
+		states.add(new states.MusicTest({name: 'music_test'}));
 
 		// Setup the debug toolbar
 #if !release
@@ -129,7 +130,7 @@ class Main extends luxe.Game {
 			states.set(default_state);
 		}
 
-		Music.init();
+		//Music.init();
 #else
 		states.set('title');
 #end
