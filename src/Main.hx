@@ -56,9 +56,10 @@ class Main extends luxe.Game {
 
 		// Hook up the map loader
 		{
-			var map_file_input = document.getElementById('map-file-input');
-			map_file_input.addEventListener('change', function(change_evt) {
-				var file:js.html.File = change_evt.target.files[0];
+			var map_file_input:js.html.InputElement = cast document.getElementById('map-file-input');
+
+			var load_map = function() {
+				var file:js.html.File = map_file_input.files[0];
 				if (file != null) {
 					var file_reader = new js.html.FileReader();
 					file_reader.onload = function(load_evt) {
@@ -68,6 +69,15 @@ class Main extends luxe.Game {
 					};
 					file_reader.readAsText(file);
 				}
+			};
+
+			map_file_input.addEventListener('change', function(change_evt) {
+				load_map();
+			});
+
+			var load_map_button = document.getElementById('load-map-button');
+			load_map_button.addEventListener('click', function(click_evt) {
+				load_map();
 			});
 		}
 

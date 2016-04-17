@@ -1,13 +1,11 @@
 package states;
 
+import luxe.Input;
 import entities.PlayerController;
 
 class Play extends luxe.States.State {
-	var player:PlayerController;
 
 	override function onenter<T>(_:T) {
-		player = new PlayerController();
-
 		// Load the default map
 		var map_id = 'assets/maps/env_test_00.json';
 		trace('Loading tiled map: $map_id');
@@ -17,6 +15,12 @@ class Play extends luxe.States.State {
 	override function onleave<T>(_:T) {
 		Luxe.scene.empty();
 		Level.destroy();
+	}
+
+	override function onkeydown(e:KeyEvent) {
+		if (e.keycode == Key.key_r) {
+			Level.reload();
+		}
 	}
 }
 
