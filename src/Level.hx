@@ -9,6 +9,7 @@ import luxe.tilemaps.Tilemap;
 import luxe.importers.tiled.TiledMap;
 
 import entities.PlayerUnit;
+import entities.PlayerController;
 import entities.Gunman;
 import entities.PlayerController;
 import components.TileMovement;
@@ -26,6 +27,7 @@ class Level {
 	static var tiles_y:Int;
 	static var elevator_tiles:Array<Tile>;
 	static var events:luxe.Events;
+	static var player:PlayerController;
 
 	public static function destroy() {
 		if (scene != null) {
@@ -70,6 +72,10 @@ class Level {
 			// Destroy the old map
 			tiled_map.destroy();
 		}
+
+		player = new PlayerController({
+			scene: scene
+		});
 
 		tiled_map = new TiledMap({
 			asset_path: 'assets/maps',
