@@ -5,8 +5,15 @@ import luxe.Sprite;
 import luxe.Text;
 import luxe.Vector;
 import luxe.Color;
+import luxe.Log.*;
 
 import components.*;
+
+typedef PlayerUnitOptions = {
+	> luxe.options.SpriteOptions,
+
+	@:optional var active:Bool;
+}
 
 class PlayerUnit extends Sprite {
 	public var controller(default, set):PlayerController;
@@ -22,7 +29,7 @@ class PlayerUnit extends Sprite {
 
 	var group_id_text:Text;
 
-	public override function new(?_options:luxe.options.SpriteOptions) {
+	public override function new(?_options:PlayerUnitOptions) {
 		// TMP: Make a tinted purple box
 		_options.color = inactive_color;
 		_options.centered = false;
@@ -40,6 +47,11 @@ class PlayerUnit extends Sprite {
 			depth: 200,
 			text: Std.string(group_id)
 		});
+
+
+		if (def(_options.active, false)) {
+			controller = PlayerController.instance;
+		}
 
 		events.listen('bumped_by', on_bumped_by);
 		events.listen('entered_abyss', on_entered_abyss);

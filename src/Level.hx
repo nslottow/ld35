@@ -97,11 +97,11 @@ class Level {
 				var tile_props = static_tileset.property_tiles.get(tile_id);
 				if (tile_props != null) {
 					var properties = tile_props.properties;
-					if (properties.get('solid') != null) {
+					if (properties.get('solid') == true) {
 						tile.solid = true;
-					} else if (properties.get('abyss') != null) {
+					} else if (properties.get('abyss') == true) {
 						tile.abyss = true;
-					} else if (properties.get('elevator') != null) {
+					} else if (properties.get('elevator') == true) {
 						tile.elevator = true;
 						elevator_tiles.push(tile);
 					}
@@ -120,48 +120,34 @@ class Level {
 				var cls = Type.resolveClass('entities.$type_name');
 				if (cls != null) {
 					trace('creating "$type_name" at ($tile_x, $tile_y)');
-					var instance:Entity = cast Type.createInstance(cls, [{
+
+					var options = {
 						scene: scene,
 						size: new Vector(tile_width, tile_height),
 						centered: false,
 						depth: 3
-					}]);
+					};
 
+					var obj_props = object.properties;
+					for (key in obj_props.keys()) {
+						var value = obj_props.get(key);
+						var type = Type.typeof(value);
+						trace('  $key($type) : $value');
+
+						Reflect.setField(options, key, value);
+					}
+
+					var instance:Entity = cast Type.createInstance(cls, [options]);
+					
 					var tile_movement:TileMovement = cast instance.get('tile_movement');
 					if (tile_movement != null) {
+						trace('$type_name at ($tile_x,$tile_y) has TileMovement component');
 						tile_movement.move_to(tile_x, tile_y, false);
 					}
 				} else {
 					trace('warning: failed to instantiate object of type "$type_name" at ($tile_x, $tile_y)');
 				}
 			}
-		}
-
-		// For now we're just creating a random smattering of units, some inactive
-		var random = Luxe.utils.random;
-		var units:Array<PlayerUnit> = [];
-
-		var available_tiles = tiles.copy();
-		// TODO: Remove solid tiles
-
-		for (i in 0...9) {
-			var unit = new PlayerUnit({
-				scene: scene,
-				size: new Vector(tile_width, tile_height),
-				depth: 100
-			});
-
-			var dest_tile = available_tiles[random.int(available_tiles.length)];
-			available_tiles.remove(dest_tile);
-			unit.tile_movement.move_to(dest_tile.x, dest_tile.y, false);
-
-			units.push(unit);
-		}
-
-		// Activate a random number of units
-		var active_count = Math.floor(Math.max(1, random.int(units.length)));
-		for (i in 0...active_count) {
-			units[i].controller = PlayerController.instance;
 		}
 
 		update_tile_state();

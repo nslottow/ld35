@@ -1,7 +1,7 @@
 { "height":12,
  "layers":[
         {
-         "data":[2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 2, 2, 2, 2, 3, 2, 2, 2, 7, 8, 8, 4, 2, 2, 2, 2, 6, 3, 3, 5, 2, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2, 2, 2, 1, 1, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 3, 3, 2, 2, 3, 3, 2, 2, 10, 2, 2, 2, 2, 10, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2, 2],
+         "data":[4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 4, 4, 4, 4, 5, 4, 4, 4, 9, 10, 10, 6, 4, 4, 4, 4, 11, 5, 5, 11, 4, 4, 4, 4, 4, 3, 3, 4, 4, 4, 4, 4, 4, 3, 3, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 5, 5, 4, 4, 5, 5, 4, 4, 12, 4, 4, 4, 4, 12, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4],
          "height":12,
          "name":"static",
          "opacity":1,
@@ -12,49 +12,122 @@
          "y":0
         }, 
         {
-         "data":[0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0],
+         "draworder":"topdown",
          "height":12,
-         "name":"units",
+         "name":"objects",
+         "objects":[
+                {
+                 "gid":1,
+                 "height":128,
+                 "id":17,
+                 "name":"",
+                 "properties":
+                    {
+                     "active":true
+                    },
+                 "propertytypes":
+                    {
+                     "active":"bool"
+                    },
+                 "rotation":0,
+                 "type":"PlayerUnit",
+                 "visible":true,
+                 "width":128,
+                 "x":384,
+                 "y":896
+                }, 
+                {
+                 "gid":1,
+                 "height":128,
+                 "id":18,
+                 "name":"",
+                 "rotation":0,
+                 "type":"PlayerUnit",
+                 "visible":true,
+                 "width":128,
+                 "x":512,
+                 "y":896
+                }, 
+                {
+                 "gid":1,
+                 "height":128,
+                 "id":19,
+                 "name":"",
+                 "properties":
+                    {
+                     "active":false
+                    },
+                 "propertytypes":
+                    {
+                     "active":"bool"
+                    },
+                 "rotation":0,
+                 "type":"PlayerUnit",
+                 "visible":true,
+                 "width":128,
+                 "x":640,
+                 "y":1280
+                }, 
+                {
+                 "gid":1,
+                 "height":128,
+                 "id":20,
+                 "name":"",
+                 "properties":
+                    {
+                     "active":false
+                    },
+                 "propertytypes":
+                    {
+                     "active":"bool"
+                    },
+                 "rotation":0,
+                 "type":"PlayerUnit",
+                 "visible":true,
+                 "width":128,
+                 "x":256,
+                 "y":1280
+                }],
          "opacity":1,
-         "type":"tilelayer",
+         "type":"objectgroup",
          "visible":true,
          "width":8,
          "x":0,
          "y":0
         }],
- "nextobjectid":15,
+ "nextobjectid":21,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tileheight":128,
  "tilesets":[
         {
-         "columns":10,
+         "columns":12,
          "firstgid":1,
          "image":"tilesets\/env.png",
          "imageheight":132,
-         "imagewidth":1302,
+         "imagewidth":1562,
          "margin":2,
          "name":"env",
          "spacing":2,
-         "tilecount":10,
+         "tilecount":12,
          "tileheight":128,
          "tileproperties":
             {
-             "0":
+             "10":
                 {
-                 "elevator":true
+                 "solid":true
+                },
+             "11":
+                {
+                 "solid":true
                 },
              "2":
                 {
-                 "abyss":true
-                },
-             "3":
-                {
-                 "solid":"true"
+                 "elevator":true
                 },
              "4":
                 {
-                 "solid":"true"
+                 "abyss":true
                 },
              "5":
                 {
@@ -79,21 +152,21 @@
             },
          "tilepropertytypes":
             {
-             "0":
+             "10":
                 {
-                 "elevator":"bool"
+                 "solid":"bool"
+                },
+             "11":
+                {
+                 "solid":"bool"
                 },
              "2":
                 {
-                 "abyss":"bool"
-                },
-             "3":
-                {
-                 "solid":"string"
+                 "elevator":"bool"
                 },
              "4":
                 {
-                 "solid":"string"
+                 "abyss":"bool"
                 },
              "5":
                 {
