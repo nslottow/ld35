@@ -36,8 +36,6 @@ class PlayerController extends Entity {
 				dy = -1;
 			case Key.down:
 				dy = 1;
-			case Key.key_r:
-				Level.reload();
 			default:
 		}
 

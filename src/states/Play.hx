@@ -1,5 +1,6 @@
 package states;
 
+import luxe.Input;
 import entities.PlayerController;
 
 class Play extends luxe.States.State {
@@ -17,6 +18,12 @@ class Play extends luxe.States.State {
 	override function onleave<T>(_:T) {
 		Luxe.scene.empty();
 		Level.destroy();
+	}
+
+	override function onkeydown(e:KeyEvent) {
+		if (e.keycode == Key.key_r) {
+			Level.reload();
+		}
 	}
 }
 
