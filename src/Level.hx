@@ -91,7 +91,6 @@ class Level {
 		var static_tileset = data.tilesets[0];
 
 		if (static_layer != null && static_tileset != null) {
-			trace('checking for solid tiles');
 			for (tile in tiles) {
 				var tile_id = static_layer.tiles[tile.y][tile.x].id - 1;
 				var tile_props = static_tileset.property_tiles.get(tile_id);

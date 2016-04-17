@@ -64,7 +64,7 @@ class TileMovement extends Component {
 
 		var dest_pos = Level.get_tile_pos(_x, _y);
 		if (_animate) {
-			Actuate.tween(pos, 0.15, {x: dest_pos.x, y: dest_pos.y});
+			Actuate.tween(pos, 0.13, {x: dest_pos.x, y: dest_pos.y});
 		} else {
 			pos.set_xy(dest_pos.x, dest_pos.y);
 		}
