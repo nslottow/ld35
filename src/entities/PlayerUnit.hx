@@ -43,6 +43,7 @@ class PlayerUnit extends Sprite {
 			point_size: 12,
 			parent: this,
 			align: TextAlign.center,
+			align_vertical: TextAlign.center,
 			pos: new Vector(size.x * 0.5, size.y * 0.5),
 			depth: 200,
 			text: Std.string(group_id)
@@ -61,6 +62,12 @@ class PlayerUnit extends Sprite {
 		super.ondestroy();
 		if (controller != null) {
 			controller.units.remove(this);
+
+			if (controller.units.length == 0) {
+				trace('Game over!');
+			} else {
+				Level.check_level_complete();
+			}
 		}
 	}
 

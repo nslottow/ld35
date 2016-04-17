@@ -6,6 +6,8 @@ import luxe.Log.*;
 
 import components.TileMovement;
 
+// TODO: This should really just be part of Level, or maybe it should be called "Puzzle"
+// because it is the thing that moves forward the puzzle logic.
 class PlayerController extends Entity {
 	public static var instance:PlayerController;
 
@@ -34,6 +36,8 @@ class PlayerController extends Entity {
 				dy = -1;
 			case Key.down:
 				dy = 1;
+			case Key.key_r:
+				Level.reload();
 			default:
 		}
 
@@ -82,6 +86,8 @@ class PlayerController extends Entity {
 
 			Level.update_tile_state();
 			build_groups();
+			// TODO: Update gunman
+			Level.check_level_complete();
 		}
 	}
 

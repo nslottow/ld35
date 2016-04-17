@@ -8,7 +8,9 @@ import luxe.Log.*;
 import luxe.tilemaps.Tilemap;
 import luxe.importers.tiled.TiledMap;
 
-import entities.*;
+import entities.PlayerUnit;
+import entities.Gunman;
+import entities.PlayerController;
 import components.TileMovement;
 
 class Level {
@@ -16,11 +18,13 @@ class Level {
 	public static var tile_height:Float;
 	public static var tile_scale:Float;
 
+	static var json_str:String;
 	static var scene:Scene;
 	static var tiled_map:TiledMap;
 	static var tiles:Array<Tile>;
 	static var tiles_x:Int;
 	static var tiles_y:Int;
+	static var elevator_tiles:Array<Tile>;
 
 	public static function destroy() {
 		if (scene != null) {
@@ -30,9 +34,21 @@ class Level {
 		if (tiled_map != null) {
 			tiled_map.destroy();
 		}
+
+		json_str = null;
 	}
 
-	public static function load_json(json_str:String) {
+	public static function reload() {
+		if (json_str != null) {
+			trace('reloading level');
+			load_json(json_str);
+		}
+	}
+
+	public static function load_json(_json_str:String) {
+		assertnull(_json_str);
+		json_str = _json_str;
+
 		if (scene == null) {
 			scene = new Scene('level');
 		} else {
@@ -89,7 +105,7 @@ class Level {
 		// Mark solid static tiles as solid
 		var static_layer = tiled_map.layers_ordered[0];
 		var static_tileset = data.tilesets[0];
-		var elevator_tiles:Array<Tile> = [];
+		elevator_tiles = [];
 
 		if (static_layer != null && static_tileset != null) {
 			for (tile in tiles) {
@@ -166,6 +182,33 @@ class Level {
 					}
 				}
 			}
+		}
+	}
+
+	public static function check_level_complete() {
+		var all_elevators_filled = true;
+		var all_units_active = true;
+		var active_unit_count = 0;
+
+		for (tile in tiles) {
+			if (tile.elevator && tile.active_unit == null) {
+				all_elevators_filled = false;
+			}
+			for (entity in tile.entities) {
+				if (Std.is(entity, PlayerUnit)) {
+					var unit:PlayerUnit = cast entity;
+					if (unit.controller == null) {
+						all_units_active = false;
+					} else {
+						++active_unit_count;
+					}
+				}
+			}
+		}
+
+		if (all_elevators_filled && all_units_active && active_unit_count == elevator_tiles.length) {
+			trace('Level complete!');
+			PlayerController.instance.active = false;
 		}
 	}
 
