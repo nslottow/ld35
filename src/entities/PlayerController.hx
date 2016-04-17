@@ -86,7 +86,7 @@ class PlayerController extends Entity {
 
 			Level.update_tile_state();
 			build_groups();
-			// TODO: Update gunman
+			Level.tick();
 			Level.check_level_complete();
 		}
 	}

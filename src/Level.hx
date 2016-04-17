@@ -25,6 +25,7 @@ class Level {
 	static var tiles_x:Int;
 	static var tiles_y:Int;
 	static var elevator_tiles:Array<Tile>;
+	static var events:luxe.Events;
 
 	public static function destroy() {
 		if (scene != null) {
@@ -45,9 +46,19 @@ class Level {
 		}
 	}
 
+	public static inline function on<T>(event_name:String, handler:T->Void):String {
+		return events.listen(event_name, handler);
+	}
+
+	public static inline function off(event_connection:String):Bool {
+		return events.unlisten(event_connection);
+	}
+
 	public static function load_json(_json_str:String) {
 		assertnull(_json_str);
 		json_str = _json_str;
+
+		events = new luxe.Events();
 
 		if (scene == null) {
 			scene = new Scene('level');
@@ -148,7 +159,7 @@ class Level {
 					for (key in obj_props.keys()) {
 						var value = obj_props.get(key);
 						var type = Type.typeof(value);
-						trace('  $key($type) : $value');
+						//trace('  $key($type) : $value');
 
 						Reflect.setField(options, key, value);
 					}
@@ -157,7 +168,6 @@ class Level {
 					
 					var tile_movement:TileMovement = cast instance.get('tile_movement');
 					if (tile_movement != null) {
-						trace('$type_name at ($tile_x,$tile_y) has TileMovement component');
 						tile_movement.move_to(tile_x, tile_y, false);
 					}
 				} else {
@@ -183,6 +193,10 @@ class Level {
 				}
 			}
 		}
+	}
+
+	public static function tick() {
+		events.fire('tick');
 	}
 
 	public static function check_level_complete() {

@@ -25,7 +25,7 @@ class PlayerUnit extends Sprite {
 	public static var inactive_color = new Color(0.3, 0.0, 0.3, 0.8);
 	public static var destruct_color = new Color(0.9, 0.3, 0.1, 0.5);
 
-	public var destructing:Bool = false;
+	public var destructing(default, set):Bool = false;
 
 	var group_id_text:Text;
 
@@ -60,15 +60,7 @@ class PlayerUnit extends Sprite {
 
 	override function ondestroy() {
 		super.ondestroy();
-		if (controller != null) {
-			controller.units.remove(this);
-
-			if (controller.units.length == 0) {
-				trace('Game over!');
-			} else {
-				Level.check_level_complete();
-			}
-		}
+		controller = null;
 	}
 
 	function on_bumped_by(other:Entity) {
@@ -81,8 +73,7 @@ class PlayerUnit extends Sprite {
 	}
 
 	function on_entered_abyss(abyss:Abyss) {
-		controller = null;
-		color = destruct_color;
+		destructing = true;
 		Luxe.timer.schedule(0.25, function() { 
 			destroy();
 		});
@@ -97,6 +88,13 @@ class PlayerUnit extends Sprite {
 		} else {
 			if (controller != null) {
 				controller.units.remove(this);
+
+				if (controller.units.length == 0) {
+					trace('Game over!');
+				} else {
+					trace('Units left: ${controller.units.length}');
+					Level.check_level_complete();
+				}
 			}
 			color = inactive_color;
 		}
@@ -111,6 +109,15 @@ class PlayerUnit extends Sprite {
 			//group_id_text.visible = false;
 		}
 		return group_id = _group_id;
+	}
+
+	public function set_destructing(_destructing:Bool) {
+		if (_destructing) {
+			controller = null;
+			color = destruct_color;
+			group_id = 0;
+		}
+		return destructing = _destructing;
 	}
 }
 
