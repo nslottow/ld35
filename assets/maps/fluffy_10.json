@@ -1,7 +1,7 @@
 { "height":7,
  "layers":[
         {
-         "data":[4, 4, 4, 4, 4, 4, 4, 4, 8, 4, 11, 4, 4, 4, 4, 4, 4, 3, 4, 11, 4, 4, 4, 4, 4, 4, 4, 4, 11, 4, 4, 4, 4, 4, 4, 4, 4, 11, 4, 4, 4, 4, 4, 4, 4, 4, 11, 4, 4, 4, 4, 4, 4, 4, 4, 11, 4, 4, 4, 4, 4, 4, 4],
+         "data":[4, 4, 4, 4, 4, 4, 4, 3, 8, 4, 11, 4, 4, 4, 4, 4, 4, 3, 4, 11, 4, 4, 4, 4, 4, 4, 4, 4, 11, 4, 4, 4, 4, 4, 4, 4, 4, 11, 4, 4, 4, 4, 4, 4, 4, 4, 11, 4, 4, 4, 4, 4, 4, 4, 4, 11, 4, 4, 4, 4, 4, 4, 4],
          "height":7,
          "name":"static",
          "opacity":1,
@@ -235,6 +235,26 @@
                  "width":128,
                  "x":1024,
                  "y":768
+                }, 
+                {
+                 "gid":1,
+                 "height":128,
+                 "id":44,
+                 "name":"blob2",
+                 "properties":
+                    {
+                     "active":false
+                    },
+                 "propertytypes":
+                    {
+                     "active":"bool"
+                    },
+                 "rotation":0,
+                 "type":"PlayerUnit",
+                 "visible":true,
+                 "width":128,
+                 "x":1024,
+                 "y":896
                 }],
          "opacity":1,
          "type":"objectgroup",
@@ -243,7 +263,7 @@
          "x":0,
          "y":0
         }],
- "nextobjectid":44,
+ "nextobjectid":45,
  "orientation":"orthogonal",
  "renderorder":"right-down",
  "tileheight":128,
