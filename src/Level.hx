@@ -12,6 +12,7 @@ import entities.PlayerUnit;
 import entities.PlayerController;
 import entities.Gunman;
 import entities.PlayerController;
+import entities.UnitDispenser;
 import components.TileMovement;
 
 class Level {
@@ -157,6 +158,7 @@ class Level {
 				var cls = Type.resolveClass('entities.$type_name');
 				if (cls != null) {
 					trace('creating "$type_name" at ($tile_x, $tile_y)');
+					//create_entity(cls, tile_x, tile_y);
 
 					var options = {
 						scene: scene,
@@ -203,6 +205,33 @@ class Level {
 				}
 			}
 		}
+	}
+
+	public static function create_entity<T>(cls:Class<T>, x:Int, y:Int, ?properties:Dynamic) {
+		var options = {
+			scene: scene,
+			size: new Vector(tile_width, tile_height),
+			centered: false,
+			depth: 3
+		};
+
+		def(properties, {});
+
+		for (key in Reflect.fields(properties)) {
+			var value = Reflect.field(properties, key);
+			var type = Type.typeof(value);
+
+			Reflect.setField(options, key, value);
+		}
+
+		var instance:Entity = cast Type.createInstance(cls, [options]);
+
+		var tile_movement:TileMovement = cast instance.get('tile_movement');
+		if (tile_movement != null) {
+			tile_movement.move_to(x, y, false);
+		}
+
+		return cast instance;
 	}
 
 	public static function tick() {
