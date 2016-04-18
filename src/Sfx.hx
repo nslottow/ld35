@@ -15,6 +15,8 @@ class Sfx {
 	static var move_sfx:Array<AudioSource>;
 	static var fall_sfx:AudioSource;
 	static var eat_sfx:AudioSource;
+	static var rifle_sfx:AudioSource;
+	static var splat_sfx:AudioSource;
 
 	static var to_play_next_tick:Map<AudioSource, SfxInfo>;
 	static var evt_tick:String;
@@ -29,10 +31,12 @@ class Sfx {
 
 		fall_sfx = Luxe.resources.audio('assets/sfx/fall-1.ogg').source;
 		eat_sfx = Luxe.resources.audio('assets/sfx/eat-1.ogg').source;
+		rifle_sfx = Luxe.resources.audio('assets/sfx/rifle-1.ogg').source;
+		splat_sfx = Luxe.resources.audio('assets/sfx/splat-1.ogg').source;
 
 		to_play_next_tick = new Map<AudioSource, SfxInfo>();
 
-		evt_tick = Level.on('tick', tick);
+		evt_tick = Level.on('post_tick', post_tick);
 	}
 
 	public static function play_move(count:Int) {
@@ -76,6 +80,28 @@ class Sfx {
 		});
 	}
 
+	public static function play_rifle() {
+		queue_for_tick({
+			source: rifle_sfx,
+			delay: 0,
+			delay_delta_min: 0,
+			delay_delta_max: 0,
+			volume_min: 0.04,
+			volume_max: 0.04
+		});
+	}
+
+	public static function play_splat(delay:Float=0) {
+		queue_for_tick({
+			source: splat_sfx,
+			delay: delay,
+			delay_delta_min: 0,
+			delay_delta_max: 0,
+			volume_min: 0.04,
+			volume_max: 0.09
+		});
+	}
+
 	static function queue_for_tick(info:SfxInfo) {
 		var source = info.source;
 		var existing_info = to_play_next_tick.get(source);
@@ -88,7 +114,7 @@ class Sfx {
 		}
 	}
 
-	static function tick(_) {
+	static function post_tick(_) {
 		var played_count = 0;
 		var random = Luxe.utils.random;
 		for (source in to_play_next_tick.keys()) {

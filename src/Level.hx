@@ -62,6 +62,7 @@ class Level {
 		json_str = _json_str;
 
 		events = new luxe.Events();
+		Sfx.init_game_sfx();
 
 		if (scene == null) {
 			scene = new Scene('level');
@@ -236,6 +237,7 @@ class Level {
 
 	public static function tick() {
 		events.fire('tick');
+		events.fire('post_tick');
 	}
 
 	public static function check_level_complete() {

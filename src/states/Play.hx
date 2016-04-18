@@ -75,8 +75,6 @@ class Play extends luxe.States.State {
 		var map_id = 'assets/maps/env_test_00.json';
 		trace('Loading tiled map: $map_id');
 		Level.load_json(Luxe.resources.text(map_id).asset.text);
-
-		Sfx.init_game_sfx();
 	}
 
 	function update_loading_indicator(dt:Float) {

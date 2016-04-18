@@ -114,6 +114,9 @@ typedef GunmanOptions = {
 				var active_unit = tile.active_unit;
 				if (active_unit != null) {
 					active_unit.destructing = true;
+
+					Sfx.play_rifle();
+
 					// TODO: Animate this properly
 					// Create a bullet sprite that flies from us to the player
 					{
@@ -145,6 +148,13 @@ typedef GunmanOptions = {
 						var dest_pos = Level.get_tile_pos(dest_tile.x, dest_tile.y);
 						dest_pos.x += hw;
 						dest_pos.y += hh;
+						var delta_pos = Vector.Subtract(pos, dest_pos);
+						delta_pos.normalize();
+						delta_pos.x *= hw;
+						delta_pos.y *= hh;
+						dest_pos.add(delta_pos);
+
+
 
 						var src_tile = tile_movement.tile;
 						var tile_dx = Math.abs(dest_tile.x - src_tile.x);
@@ -153,6 +163,7 @@ typedef GunmanOptions = {
 						var delay = tile_distance * 0.05;
 						var tween = Actuate.tween(bullet.pos, delay, {x: dest_pos.x, y: dest_pos.y});
 						tween.ease(new SineEaseIn());
+						Sfx.play_splat(delay * 0.9);
 
 						delay += 0.03;
 						Luxe.timer.schedule(delay, function() {
