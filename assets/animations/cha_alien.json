@@ -1,0 +1,28 @@
+{
+    "active" : {
+        "frame_size":{ "x":"128", "y":"128" },
+        "frameset": ["3"]
+    },
+    "inactive" : {
+        "frame_size":{ "x":"128", "y":"128" },
+        "frameset": ["4"]
+    },
+    "blink" : {
+        "frame_size":{ "x":"128", "y":"128" },
+        "frameset": ["2", "3"],
+        "loop": "false",
+        "speed": "4"
+    },
+    "move" : {
+        "frame_size":{ "x":"128", "y":"128" },
+        "frameset": ["5-7"],
+        "loop": "true",
+        "speed": "10"
+    },
+    "hurt" : {
+        "frame_size":{ "x":"128", "y":"128" },
+        "frameset": ["4", "1"],
+        "loop": "true",
+        "speed": "6"
+    }
+}

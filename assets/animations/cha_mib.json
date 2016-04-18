@@ -1,0 +1,26 @@
+{
+    "attack_down": {
+        "frame_size":{ "x":"128", "y":"128" },
+        "frameset": ["1"]
+    },
+    "attack_left": {
+        "frame_size":{ "x":"128", "y":"128" },
+        "frameset": ["2"]
+    },
+    "attack_right": {
+        "frame_size":{ "x":"128", "y":"128" },
+        "frameset": ["3"]
+    },
+    "attack_up": {
+        "frame_size":{ "x":"128", "y":"128" },
+        "frameset": ["4"]
+    },
+	"dead": {
+        "frame_size":{ "x":"128", "y":"128" },
+        "frameset": ["5"]
+    },
+	"plasma": {
+        "frame_size":{ "x":"128", "y":"128" },
+        "frameset": ["16"]
+    }
+}
