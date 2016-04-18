@@ -263,6 +263,26 @@ class Level {
 
 		if (all_elevators_filled && all_units_active && active_unit_count == elevator_tiles.length) {
 			trace('Level complete!');
+
+			var delay = 0.4;
+
+			Luxe.timer.schedule(delay, function() {
+				Luxe.audio.play(Luxe.resources.audio('assets/sfx/elevatorbing-1.ogg').source, 0.5);
+			});
+
+			delay += 1.2;
+
+			Luxe.timer.schedule(delay, function() {
+				Luxe.audio.play(Luxe.resources.audio('assets/sfx/elevator-1.ogg').source, 0.5);
+			});
+
+			delay += 2.6;
+
+			Luxe.timer.schedule(delay, function() {
+				Luxe.audio.play(Luxe.resources.audio('assets/sfx/elevatorbing-2.ogg').source, 0.5);
+			});
+
+
 			PlayerController.instance.active = false;
 		}
 	}
