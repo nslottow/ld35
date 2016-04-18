@@ -22,7 +22,6 @@ class Main extends luxe.Game {
 				{ id:'assets/animations/cha_mib.json' }
 			],
 			textures: [
-				{ id: 'assets/maps/tilesets/env.png' },
                 { id: 'assets/textures/cha_alien.png' },
                 { id: 'assets/textures/cha_mib.png' }
 			],
@@ -45,6 +44,9 @@ class Main extends luxe.Game {
 			color: background_color,
 			no_scene: true
 		});
+
+		ScreenFade.init();
+		ScreenFade.fade_from_black(2);
 
 		// Setup the game states
 		states = new StateManager();

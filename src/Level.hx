@@ -273,6 +273,7 @@ class Level {
 			delay += 1.2;
 
 			Luxe.timer.schedule(delay, function() {
+				ScreenFade.fade_to_black(2);
 				Luxe.audio.play(Luxe.resources.audio('assets/sfx/elevator-1.ogg').source, 0.5);
 			});
 
@@ -280,6 +281,11 @@ class Level {
 
 			Luxe.timer.schedule(delay, function() {
 				Luxe.audio.play(Luxe.resources.audio('assets/sfx/elevatorbing-2.ogg').source, 0.5);
+			});
+
+			delay += 0.2;
+			Luxe.timer.schedule(delay, function() {
+				ScreenFade.fade_from_black(2);
 			});
 
 
