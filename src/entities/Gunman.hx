@@ -154,8 +154,6 @@ typedef GunmanOptions = {
 						delta_pos.y *= hh;
 						dest_pos.add(delta_pos);
 
-
-
 						var src_tile = tile_movement.tile;
 						var tile_dx = Math.abs(dest_tile.x - src_tile.x);
 						var tile_dy = Math.abs(dest_tile.y - src_tile.y);

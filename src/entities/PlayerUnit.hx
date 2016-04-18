@@ -66,16 +66,20 @@ class PlayerUnit extends Sprite {
 		}
 
 		if (falling) {
-			centered = true;
-			pos.x += Level.tile_width * 0.5;
-			pos.y += Level.tile_height * 0.5;
-			fall_tween_target = size;	
-			Actuate.tween(fall_tween_target, 0.23, {x: size.x * 0.1, y: size.y * 0.1})
-				.ease(new luxe.tween.easing.Quad.QuadEaseOut());
-			Luxe.timer.schedule(0.25, function() { 
-				destroy();
-			});
+			fall();
 		}
+	}
+
+	function fall() {
+		centered = true;
+		pos.x += Level.tile_width * 0.5;
+		pos.y += Level.tile_height * 0.5;
+		fall_tween_target = size;	
+		Actuate.tween(fall_tween_target, 0.23, {x: size.x * 0.1, y: size.y * 0.1})
+			.ease(new luxe.tween.easing.Quad.QuadEaseOut());
+		Luxe.timer.schedule(0.25, function() { 
+			destroy();
+		});
 	}
 
 	function on_bumped_by(other:Entity) {
@@ -90,6 +94,9 @@ class PlayerUnit extends Sprite {
 	function on_entered_abyss(abyss:Abyss) {
 		destructing = true;
 		falling = true;
+		if (!tile_movement.moving) {
+			fall();
+		}
 	}
 
 	public function set_controller(_controller:PlayerController) {

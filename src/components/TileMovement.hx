@@ -15,6 +15,8 @@ class TileMovement extends Component {
 	public var pushable:Bool = false;
 	public var walkable:Bool = false;
 
+	public var moving:Bool = false;
+
 	var tween_target:Dynamic;
 
 	override function onremoved() {
@@ -72,10 +74,12 @@ class TileMovement extends Component {
 
 		var dest_pos = Level.get_tile_pos(_x, _y);
 		if (_animate) {
+			moving = true;
 			entity.events.fire('move.start');
 			tween_target = pos;
 			var tween = Actuate.tween(tween_target, 0.18, {x: dest_pos.x, y: dest_pos.y});
 			tween.onComplete(function() {
+				moving = false;
 				entity.events.fire('move.finish');
 			});
 		} else {
