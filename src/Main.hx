@@ -48,6 +48,8 @@ class Main extends luxe.Game {
 		states.add(new states.Title({name: 'title'}));
 		states.add(new states.LevelSelect({name: 'level_select'}));
 		states.add(new states.Play({name: 'play'}));
+		states.add(new states.Ending({name: 'ending'}));
+		states.add(new states.Credits({name: 'credits'}));
 
 #if !release
 		// Setup the test states
