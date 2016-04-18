@@ -7,6 +7,9 @@ import luxe.Vector;
 import luxe.Color;
 import luxe.Log.*;
 import luxe.tween.Actuate;
+import luxe.tween.easing.Sine;
+import luxe.tween.easing.Linear;
+import luxe.components.sprite.SpriteAnimation;
 
 import components.*;
 
@@ -18,31 +21,31 @@ typedef GunmanOptions = {
 
 @:keep class Gunman extends Sprite {
 	var tile_movement:TileMovement;
+	var anim:SpriteAnimation;
 	var face:String;
-	var facing_text:Text;
 
 	var evt_tick:String;
 
 	public override function new(?_options:GunmanOptions) {
-		_options.color = new Color(1.0, 1.0, 0.2, 0.8);
+		_options.texture = Luxe.resources.texture('assets/textures/cha_mib.png');
 		_options.centered = false;
+		_options.depth = 1;
 
 		super(_options);
 
 		tile_movement = add(new TileMovement({name: 'tile_movement'}));
 		tile_movement.walkable = true;
 
-		face = def(_options.face, 'right');
+		{
+			face = def(_options.face, 'right');
+		}
 
-		facing_text = new Text({
-			point_size: 12,
-			parent: this,
-			align: TextAlign.center,
-			align_vertical: TextAlign.center,
-			pos: new Vector(size.x * 0.5, size.y * 0.5),
-			depth: 200,
-			text: face
-		});
+		{
+			var anim_data = Luxe.resources.json('assets/animations/cha_mib.json').asset.json;
+			anim = add(new SpriteAnimation({ name: 'anim' }));
+			anim.add_from_json_object(anim_data);
+			anim.animation = 'attack_$face';
+		}
 
 		evt_tick = Level.on('tick', tick);
 		events.listen('bumped_by', on_bumped_by);
@@ -50,6 +53,7 @@ typedef GunmanOptions = {
 
 	override function ondestroy() {
 		super.ondestroy();
+		anim.stop();
 		Level.off(evt_tick);
 	}
 
@@ -58,10 +62,8 @@ typedef GunmanOptions = {
 			// Deactivate this gunman so it doesn't shoot on the tick it dies
 			active = false;
 
-			// TODO: destroy this after the current tick properly
-			Luxe.timer.schedule(0.1, function() {
-				destroy();
-			});
+			anim.animation = 'dead';
+			remove('tile_movement');
 		}
 	}
 
@@ -119,18 +121,40 @@ typedef GunmanOptions = {
 
 						var bullet = new Sprite({
 							pos: new Vector(pos.x + hw, pos.y + hh),
-							size: new Vector(size.x * 0.5, size.y * 0.5),
-							color: new Color(1, 0, 1),
+							size: new Vector(size.x * 1.2, size.y * 1.2),
+							texture: Luxe.resources.texture('assets/textures/cha_mib.png'),
 							depth: 300
 						});
 
+						var anim_data = Luxe.resources.json('assets/animations/cha_mib.json').asset.json;
+						var bullet_anim = bullet.add(new SpriteAnimation({ name: 'anim' }));
+						bullet_anim.add_from_json_object(anim_data);
+						bullet_anim.animation = 'plasma';
+
+						switch (face) {
+							case 'left':
+								bullet.flipx = true;
+							case 'up':
+								bullet.radians = -Math.PI * 0.5;
+							case 'down':
+								bullet.radians = Math.PI * 0.5;
+						}
 
 						var dest_tile = active_unit.tile_movement.tile;
 						var dest_pos = Level.get_tile_pos(dest_tile.x, dest_tile.y);
 						dest_pos.x += hw;
 						dest_pos.y += hh;
-						Actuate.tween(bullet.pos, 0.15, {x: dest_pos.x, y: dest_pos.y});
-						Luxe.timer.schedule(0.2, function() {
+
+						var src_tile = tile_movement.tile;
+						var tile_dx = Math.abs(dest_tile.x - src_tile.x);
+						var tile_dy = Math.abs(dest_tile.y - src_tile.y);
+						var tile_distance = Math.max(tile_dx, tile_dy);
+						var delay = tile_distance * 0.05;
+						var tween = Actuate.tween(bullet.pos, delay, {x: dest_pos.x, y: dest_pos.y});
+						tween.ease(new SineEaseIn());
+
+						delay += 0.03;
+						Luxe.timer.schedule(delay, function() {
 							bullet.destroy();
 							active_unit.destroy();
 						});

@@ -17,11 +17,14 @@ class Main extends luxe.Game {
 
 	override function config(config:luxe.AppConfig) {
 		config.preload = {
+            jsons: [
+				{ id:'assets/animations/cha_alien.json' },
+				{ id:'assets/animations/cha_mib.json' }
+			],
 			textures: [
-				{ id: 'assets/maps/tilesets/8x8_dungeon.png' },
-				{ id: 'assets/maps/tilesets/top_down_dungeon.png' },
-				{ id: 'assets/maps/tilesets/packer_test.png' },
 				{ id: 'assets/maps/tilesets/env.png' },
+                { id: 'assets/textures/cha_alien.png' },
+                { id: 'assets/textures/cha_mib.png' }
 			],
 			texts: [
 				{ id: 'assets/maps/env_test_00.json' }, // default map

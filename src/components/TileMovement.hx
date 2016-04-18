@@ -15,9 +15,16 @@ class TileMovement extends Component {
 	public var pushable:Bool = false;
 	public var walkable:Bool = false;
 
-	override function ondestroy() {
+	var tween_target:Dynamic;
+
+	override function onremoved() {
+		
 		if (tile != null) {
 			tile.entities.remove(entity);
+		}
+
+		if (tween_target != null) {
+			Actuate.stop(tween_target);
 		}
 	}
 
@@ -40,7 +47,7 @@ class TileMovement extends Component {
 				// TODO: This is a kind of confusing way to distinguish between walkable and not
 				// I might stil use this for enemies though
 				var other_movement:TileMovement = other_entity.get('tile_movement');
-				if (other_movement == null || !other_movement.walkable) {
+				if (other_movement != null && !other_movement.walkable) {
 					move_blocked = true;
 				}
 			}
@@ -65,7 +72,12 @@ class TileMovement extends Component {
 
 		var dest_pos = Level.get_tile_pos(_x, _y);
 		if (_animate) {
-			Actuate.tween(pos, 0.13, {x: dest_pos.x, y: dest_pos.y});
+			entity.events.fire('move.start');
+			tween_target = pos;
+			var tween = Actuate.tween(tween_target, 0.18, {x: dest_pos.x, y: dest_pos.y});
+			tween.onComplete(function() {
+				entity.events.fire('move.finish');
+			});
 		} else {
 			pos.set_xy(dest_pos.x, dest_pos.y);
 		}

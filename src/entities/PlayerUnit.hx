@@ -6,6 +6,9 @@ import luxe.Text;
 import luxe.Vector;
 import luxe.Color;
 import luxe.Log.*;
+import luxe.components.sprite.SpriteAnimation;
+
+import luxe.tween.Actuate;
 
 import components.*;
 
@@ -18,49 +21,61 @@ typedef PlayerUnitOptions = {
 class PlayerUnit extends Sprite {
 	public var controller(default, set):PlayerController;
 	public var tile_movement:TileMovement;
-	public var group:Array<PlayerUnit>;
-	public var group_id(default, set):Int = 0;
+	public var anim:SpriteAnimation;
 	
-	public static var active_color = new Color(0.7, 0.1, 0.7, 0.8);
-	public static var inactive_color = new Color(0.3, 0.0, 0.3, 0.8);
-	public static var destruct_color = new Color(0.9, 0.3, 0.1, 0.5);
+	public static var active_color = new Color(1, 1, 1);
+	public static var inactive_color = new Color(0.7, 0.4, 0.7);
 
 	public var destructing(default, set):Bool = false;
 
-	var group_id_text:Text;
+	var falling:Bool = false;
+	var fall_tween_target:Dynamic;
 
 	public override function new(?_options:PlayerUnitOptions) {
-		// TMP: Make a tinted purple box
-		_options.color = inactive_color;
+		_options.texture = Luxe.resources.texture('assets/textures/cha_alien.png');
 		_options.centered = false;
 
 		super(_options);
 		
 		tile_movement = add(new TileMovement({name: 'tile_movement'}));
-		group = [this];
 
-		group_id_text = new Text({
-			point_size: 12,
-			parent: this,
-			align: TextAlign.center,
-			align_vertical: TextAlign.center,
-			pos: new Vector(size.x * 0.5, size.y * 0.5),
-			depth: 200,
-			text: Std.string(group_id)
-		});
-
-
-		if (def(_options.active, false)) {
-			controller = PlayerController.instance;
+		{
+			var anim_data = Luxe.resources.json('assets/animations/cha_alien.json').asset.json;
+			anim = add(new SpriteAnimation({ name: 'anim' }));
+			anim.add_from_json_object(anim_data);
+			anim.animation = 'inactive';
 		}
 
+		controller = def(_options.active, false) ? PlayerController.instance : null;
+
+		events.listen('move.start', function(_) { anim.animation = 'move'; anim.play(); });
+		events.listen('move.finish', on_move_finish);
 		events.listen('bumped_by', on_bumped_by);
 		events.listen('entered_abyss', on_entered_abyss);
 	}
 
 	override function ondestroy() {
 		super.ondestroy();
+		Actuate.stop(fall_tween_target);
 		controller = null;
+	}
+
+	function on_move_finish(_) {
+		if (!destructing) {
+			anim.animation = 'active';
+		}
+
+		if (falling) {
+			centered = true;
+			pos.x += Level.tile_width * 0.5;
+			pos.y += Level.tile_height * 0.5;
+			fall_tween_target = size;	
+			Actuate.tween(fall_tween_target, 0.23, {x: size.x * 0.1, y: size.y * 0.1})
+				.ease(new luxe.tween.easing.Quad.QuadEaseOut());
+			Luxe.timer.schedule(0.25, function() { 
+				destroy();
+			});
+		}
 	}
 
 	function on_bumped_by(other:Entity) {
@@ -74,9 +89,7 @@ class PlayerUnit extends Sprite {
 
 	function on_entered_abyss(abyss:Abyss) {
 		destructing = true;
-		Luxe.timer.schedule(0.25, function() { 
-			destroy();
-		});
+		falling = true;
 	}
 
 	public function set_controller(_controller:PlayerController) {
@@ -85,6 +98,7 @@ class PlayerUnit extends Sprite {
 				_controller.units.push(this);
 			}
 			color = active_color;
+			anim.animation = 'active';
 		} else {
 			if (controller != null) {
 				controller.units.remove(this);
@@ -93,29 +107,28 @@ class PlayerUnit extends Sprite {
 					trace('Game over!');
 				} else {
 					trace('Units left: ${controller.units.length}');
+
+
+					Level.update_tile_state();
+					if (PlayerController.instance != null) {
+						PlayerController.instance.build_groups();
+					}
 					Level.check_level_complete();
 				}
 			}
-			color = inactive_color;
+
+			if (!destructing) {
+				color = inactive_color;
+			}
 		}
 		return controller = _controller;
-	}
-
-	public function set_group_id(_group_id:Int) {
-		if (_group_id != 0) {
-			group_id_text.text = Std.string(_group_id);
-			//group_id_text.visible = true;
-		} else {
-			//group_id_text.visible = false;
-		}
-		return group_id = _group_id;
 	}
 
 	public function set_destructing(_destructing:Bool) {
 		if (_destructing) {
 			controller = null;
-			color = destruct_color;
-			group_id = 0;
+			anim.animation = 'hurt';
+			anim.play();
 		}
 		return destructing = _destructing;
 	}

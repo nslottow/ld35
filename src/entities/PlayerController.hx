@@ -100,8 +100,6 @@ class PlayerController extends Entity {
 
 				var group:Array<PlayerUnit> = [unit];
 				var grounded = !unit.tile_movement.tile.abyss; // is at least one unit in the group over solid ground?
-				unit.group = group;
-				unit.group_id = group_id;
 
 				var frontier:Array<Level.Tile> = unit.tile_movement.tile.neighbors.copy();
 				while (frontier.length > 0) {
@@ -110,8 +108,6 @@ class PlayerController extends Entity {
 						unvisited_units.remove(tile.active_unit);
 
 						group.push(tile.active_unit);
-						tile.active_unit.group = group;
-						tile.active_unit.group_id = group_id;
 
 						if (!tile.abyss) {
 							grounded = true;

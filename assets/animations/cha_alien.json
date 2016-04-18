@@ -17,7 +17,7 @@
         "frame_size":{ "x":"128", "y":"128" },
         "frameset": ["5-7"],
         "loop": "true",
-        "speed": "10"
+        "speed": "16"
     },
     "goo" : {
         "frame_size":{ "x":"128", "y":"128" },
