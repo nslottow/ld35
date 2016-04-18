@@ -85,6 +85,10 @@ class Level {
 
 		// Scale the tilemap so the whole thing fits horizontally within the window
 		tile_scale = Main.w_points / (tiled_map.tile_width * tiled_map.width);
+		if (tile_scale * (tiled_map.height + 1) * tiled_map.tile_height >= Main.h_points) {
+			tile_scale = Main.h_points / (tiled_map.tile_height * (tiled_map.height + 1));
+		}
+
 		tiled_map.display({
 			scale: tile_scale
 		});
