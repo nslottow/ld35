@@ -23,13 +23,20 @@ class Play extends luxe.States.State {
 				{ id:'assets/animations/cha_mib.json' }
 			],
             textures: [
+				{ id: 'assets/maps/tilesets/env.png' }, // default tileset
                 { id: 'assets/textures/cha_alien.png' },
                 { id: 'assets/textures/cha_mib.png' }
             ],
+			texts: [
+				{ id: 'assets/maps/env_test_00.json' }, // default map
+			],
 			sounds: [
+				/*
+				// NOTE: Not using ambient sfx for now
 				{ id: 'assets/sfx/ambient-layer1.ogg', is_stream: false },
 				{ id: 'assets/sfx/ambient-layer2.ogg', is_stream: false },
 				{ id: 'assets/sfx/ambient-layer3.ogg', is_stream: false },
+				*/
 				{ id: 'assets/sfx/eat-1.ogg', is_stream: false },
 				{ id: 'assets/sfx/elevator-1.ogg', is_stream: false },
 				{ id: 'assets/sfx/elevatorbing-1.ogg', is_stream: false },
@@ -68,6 +75,8 @@ class Play extends luxe.States.State {
 		var map_id = 'assets/maps/env_test_00.json';
 		trace('Loading tiled map: $map_id');
 		Level.load_json(Luxe.resources.text(map_id).asset.text);
+
+		Sfx.init_game_sfx();
 	}
 
 	function update_loading_indicator(dt:Float) {

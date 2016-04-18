@@ -82,6 +82,12 @@ class PlayerController extends Entity {
 				unit.tile_movement.move(dx, dy);
 			}
 
+			// Sfx
+			var sfx_count = to_move.length <= 2 ? to_move.length : 2;
+			Sfx.play_move(sfx_count);
+
+			// Update game state
+
 			Level.update_tile_state();
 			build_groups();
 			Level.tick();
@@ -93,6 +99,7 @@ class PlayerController extends Entity {
 		// Check for entities falling into an abyss
 		var group_id = 0;
 		var unvisited_units = units.copy();
+		var fallen_count = 0;
 		for (unit in units) {
 			if (unvisited_units.indexOf(unit) != -1) {
 				unvisited_units.remove(unit);
@@ -121,11 +128,15 @@ class PlayerController extends Entity {
 
 				if (!grounded) {
 					for (u in group) {
+						++fallen_count;
 						u.events.fire('entered_abyss');
 					}
 				}
 			}
 		}
+
+		var sfx_count = fallen_count <= 3 ? fallen_count : 3;
+		Sfx.play_fall(sfx_count);
 	}
 
 	function get_push_chain(start_tile:Level.Tile, dx:Int, dy:Int):Array<TileMovement> {

@@ -64,6 +64,7 @@ typedef GunmanOptions = {
 
 			anim.animation = 'dead';
 			remove('tile_movement');
+			Sfx.play_eat();
 		}
 	}
 
