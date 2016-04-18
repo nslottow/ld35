@@ -195,6 +195,7 @@
             <key type="filename">cha_alien_walkcycle01-01_r.png</key>
             <key type="filename">cha_alien_walkcycle01-02_r.png</key>
             <key type="filename">cha_alien_walkcycle01-03_r.png</key>
+            <key type="filename">effect_goopile_001_r.png</key>
             <struct type="IndividualSpriteSettings">
                 <key>pivotPoint</key>
                 <point_f>0.5,0.5</point_f>
@@ -209,6 +210,7 @@
             <filename>cha_alien_walkcycle01-01_r.png</filename>
             <filename>cha_alien_walkcycle01-02_r.png</filename>
             <filename>cha_alien_walkcycle01-03_r.png</filename>
+            <filename>effect_goopile_001_r.png</filename>
         </array>
         <key>ignoreFileList</key>
         <array/>

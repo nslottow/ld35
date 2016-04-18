@@ -19,10 +19,14 @@
         "loop": "true",
         "speed": "10"
     },
+    "goo" : {
+        "frame_size":{ "x":"128", "y":"128" },
+        "frameset": ["8"]
+    },
     "hurt" : {
         "frame_size":{ "x":"128", "y":"128" },
         "frameset": ["4", "1"],
-        "loop": "true",
-        "speed": "6"
+        "loop": "false",
+        "speed": "8"
     }
 }

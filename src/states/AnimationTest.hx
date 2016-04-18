@@ -103,6 +103,24 @@ class AnimationTest extends luxe.States.State {
 			anim.play();
 		}
 
+		// Alien goo
+		{
+			var texture = Luxe.resources.texture('assets/textures/cha_alien.png');
+			var sprite = new Sprite({
+				pos: new Vector(sprite_size.x * 4 + margin, margin),
+				texture: texture,
+				size: sprite_size,
+				centered: false
+			});
+			var anim_data = Luxe.resources.json('assets/animations/cha_alien.json').asset.json;
+			var anim = sprite.add(new SpriteAnimation({ name: 'anim' }));
+			anim.add_from_json_object(anim_data);
+
+			anim.animation = 'goo';
+			anim.play();
+		}
+
+
 		// Gunman down
 		{
 			var texture = Luxe.resources.texture('assets/textures/cha_mib.png');
