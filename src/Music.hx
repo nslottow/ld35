@@ -13,16 +13,30 @@ import luxe.utils.Maths;
 	TODO: When changing energy level, no need to crossfade
 	TODO: Change motifs randomly at any point in time -> crossfade new motif
 	TODO: If the new motif is requested within 2-3 seconds of a boundary, wait for the boundary
+
+	BUG: Snow WebAudio does not handle Audio.play(paused = true), i.e. getting an AudioHandle
+	that you want to start paused.
+	BUG: AudioHandles also become invalid when they are finished playing. Not sure if this is a bug.
+	BUG: AudioSource.duration() is incorrect on WebAudio for ogg at least.
+	I tried to instead keep looping an audio handle and changing the volume and position. Didn't work
+	because of AudioSource.duration() bug.
+
+	NOTE: Handle sequences are always sequential
+
+	NOTE: js.html.AudioBufferSourceNode can only be played once, must be recreated
+	NOTE: js.html.AudioBuffer can be reused with multiple AudioBufferSourceNodes
 **/
 class Music {
 	public static var current_energy:MusicInstance;
 	public static var next_energy:MusicInstance;
 	public static var next_motif:MusicInstance;
 
+	public static var paused(default, null):Bool = false;
+
 	static var fade_to:MusicInstance;
 	static var fade_from:MusicInstance;
 
-	static inline var music_volume = 0.3;
+	static inline var music_volume = 0.8;
 
 	public static var transition_next_loop:Bool = false;
 
@@ -66,16 +80,13 @@ class Music {
 
 		switch (info.target) {
 			case 'current_energy':
-				trace('loaded active: $resource_id');
 				if (current_energy == null) {
 					// Startup two handles for looping
 					var active_handle = Luxe.audio.play(resource.source, music_volume);
-					var inactive_handle = Luxe.audio.play(resource.source, music_volume);
-					Luxe.audio.pause(inactive_handle);
 
 					current_energy = {
 						active_handle: active_handle,
-						inactive_handle: inactive_handle,
+						inactive_handle: null,
 						source: resource.source,
 						motif: info.motif,
 						energy: info.energy
@@ -89,11 +100,8 @@ class Music {
 				}
 
 			case 'next_energy':
-				trace('loaded next: $resource_id');
 				if (next_energy == null) {
 					var active_handle = Luxe.audio.play(resource.source, 0);
-					var inactive_handle = Luxe.audio.play(resource.source, 0);
-					Luxe.audio.pause(inactive_handle);
 
 					var elapsed_time:Float = 0;
 					if (loop_timer != null) {
@@ -103,7 +111,25 @@ class Music {
 
 					next_energy = {
 						active_handle: active_handle,
-						inactive_handle: inactive_handle,
+						inactive_handle: null,
+						source: resource.source,
+						motif: info.motif,
+						energy: info.energy
+					};
+				}
+			case 'next_motif':
+				if (next_motif == null) {
+					var active_handle = Luxe.audio.play(resource.source, 0);
+
+					var elapsed_time:Float = 0;
+					if (loop_timer != null) {
+						elapsed_time = snow.Snow.timestamp - (loop_timer.fire_at - loop_timer.time);
+					}
+					Luxe.audio.position(active_handle, elapsed_time);
+
+					next_motif = {
+						active_handle: active_handle,
+						inactive_handle: null,
 						source: resource.source,
 						motif: info.motif,
 						energy: info.energy
@@ -113,25 +139,39 @@ class Music {
 	}
 
 	public static function pause() {
+		paused = true;
 	}
 
 	public static function resume() {
+		paused = false;
 	}
 
 	static function loop_handler() {
-		trace('swapping active music handles');
 		swap_active_handles(current_energy);
 		swap_active_handles(next_energy);
 
 		if (transition_next_loop) {
 			transition_next_loop = false;
 
-			trace('starting crossfade');
+			// TODO: Don't crossfade between energies
+			// TODO: Crossfade between motifs
+
+			// 1) Play music for current energy
+			// 2) Pick next energy
+			// 3) Set a timer for 24 seconds later to play next energy and let current energy finish, or do this check in update(dt)
+			// 4) 
+
+			// Forget about the music for the last energy level
+			current_energy = next_energy;
+			var active_handle = current_energy.active_handle;
+			var inactive_handle = current_energy.inactive_handle;
+
+			Luxe.audio.volume(active_handle, music_volume);
+			if (inactive_handle != null || Luxe.audio.state_of(inactive_handle) != as_inavlid) {
+				Luxe.audio.volume(inactive_handle, music_volume);
+			}
 
 			// Start crossfading between current_energy and next_energy
-			// TODO: When the crossfade finishes
-			//   swap current and next energy level
-			//   start loading next energy level
 			fade_to = next_energy;
 			fade_from = current_energy;
 			fade_start_time = snow.Snow.timestamp;
@@ -182,12 +222,11 @@ class Music {
 		}
 
 		var new_active_handle = instance.inactive_handle;
-		Luxe.audio.unpause(new_active_handle);
-		Luxe.audio.position(new_active_handle, 0);
-
-		if (Luxe.audio.state_of(new_active_handle) == as_invalid) {
-			Luxe.audio.stop(new_active_handle);
+		if (new_active_handle == null || Luxe.audio.state_of(new_active_handle) == as_invalid) {
 			new_active_handle = Luxe.audio.play(instance.source, Luxe.audio.volume_of(instance.active_handle));
+		} else {
+			Luxe.audio.unpause(new_active_handle);
+			Luxe.audio.position(new_active_handle, 0);
 		}
 
 		var new_inactive_handle = instance.active_handle;
