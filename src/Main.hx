@@ -16,6 +16,12 @@ class Main extends luxe.Game {
 	public static var states:StateManager;
 
 	override function config(config:luxe.AppConfig) {
+		config.preload = {
+			jsons: [
+                { id: 'assets/map_list.json' },
+			]
+		};
+
 		return config;
 	}
 
@@ -31,6 +37,8 @@ class Main extends luxe.Game {
 			no_scene: true,
 			depth: -1000
 		});
+
+		Level.init_map_list();
 
 		ScreenFade.init();
 		ScreenFade.fade_from_black(2);
@@ -127,7 +135,7 @@ class Main extends luxe.Game {
 			states.set(default_state);
 		}
 #else
-		states.set('title');
+		states.set('level_select');
 #end
 	}
 }

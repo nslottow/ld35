@@ -1,5 +1,6 @@
 package;
 
+import luxe.Parcel;
 import luxe.Scene;
 import luxe.Entity;
 import luxe.Vector;
@@ -20,6 +21,9 @@ class Level {
 	public static var tile_height:Float;
 	public static var tile_scale:Float;
 
+	static var last_played_map_index:Int = -1;
+	static var map_list:Array<String>;
+
 	static var json_str:String;
 	static var scene:Scene;
 	static var tiled_map:TiledMap;
@@ -29,6 +33,10 @@ class Level {
 	static var elevator_tiles:Array<Tile>;
 	static var events:luxe.Events;
 	static var player:PlayerController;
+
+	public static function init_map_list() {
+		map_list = Luxe.resources.json('assets/map_list.json').asset.json;
+	}
 
 	public static function destroy() {
 		if (scene != null) {
@@ -55,6 +63,26 @@ class Level {
 
 	public static inline function off(event_connection:String):Bool {
 		return events.unlisten(event_connection);
+	}
+
+	public static function load_indexed_map(index:Int, oncomplete:Void->Void=null) {
+		if (index < 0 || index >= map_list.length) {
+			return;
+		}
+
+		var map_id = 'assets/maps/${map_list[index]}';
+		var parcel = new Parcel({
+			texts: [{ id: map_id }],
+			oncomplete: function(_) {
+				load_json(Luxe.resources.text(map_id).asset.text);
+				if (oncomplete != null) {
+					oncomplete();
+				}
+			}
+		});
+		parcel.load();
+
+		last_played_map_index = index;
 	}
 
 	public static function load_json(_json_str:String) {
@@ -285,7 +313,9 @@ class Level {
 
 			delay += 0.2;
 			Luxe.timer.schedule(delay, function() {
-				ScreenFade.fade_from_black(2);
+				load_indexed_map(last_played_map_index + 1, function() {
+					ScreenFade.fade_from_black(0.7);
+				});
 			});
 
 

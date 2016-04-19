@@ -15,8 +15,12 @@ import entities.PlayerController;
 class Play extends luxe.States.State {
 	var parcel:Parcel;
 	var loading_indicator:Sprite;
+	var initial_map_index:Null<Int>;
 
-	override function onenter<T>(_:T) {
+	override function onenter<T>(_map_index:T) {
+		initial_map_index = cast _map_index;
+
+
 		parcel = new Parcel({
             jsons: [
 				{ id:'assets/animations/cha_alien.json' },
@@ -27,9 +31,6 @@ class Play extends luxe.States.State {
                 { id: 'assets/textures/cha_alien.png' },
                 { id: 'assets/textures/cha_mib.png' }
             ],
-			texts: [
-				{ id: 'assets/maps/env_test_00.json' }, // default map
-			],
 			sounds: [
 				/*
 				// NOTE: Not using ambient sfx for now
@@ -54,6 +55,7 @@ class Play extends luxe.States.State {
 			oncomplete: on_loaded
         });
 
+
 		loading_indicator = new Sprite({
 			pos: new Vector(Main.w_points * 0.5, Main.h_points * 0.5),
 			size: new Vector(96, 96),
@@ -67,14 +69,18 @@ class Play extends luxe.States.State {
 	}
 
 	function on_loaded(_) {
-		loading_indicator.active = false;
-		loading_indicator.visible = false;
-		Luxe.core.off(Ev.update, update_loading_indicator);
 
-		// Load the default map
-		var map_id = 'assets/maps/env_test_00.json';
-		trace('Loading tiled map: $map_id');
-		Level.load_json(Luxe.resources.text(map_id).asset.text);
+		if (initial_map_index != null) {
+			Level.load_indexed_map(initial_map_index, function() {
+				loading_indicator.active = false;
+				loading_indicator.visible = false;
+				Luxe.core.off(Ev.update, update_loading_indicator);
+			});
+		} else {
+			// Load the default map
+			var map_id = 'assets/maps/env_test_00.json';
+			Level.load_json(Luxe.resources.text(map_id).asset.text);
+		}
 	}
 
 	function update_loading_indicator(dt:Float) {
@@ -90,8 +96,11 @@ class Play extends luxe.States.State {
 	}
 
 	override function onkeydown(e:KeyEvent) {
-		if (e.keycode == Key.key_r) {
-			Level.reload();
+		switch (e.keycode) {
+			case Key.key_r:
+				Level.reload();
+			case Key.escape:
+				Main.states.set('level_select');
 		}
 	}
 }
