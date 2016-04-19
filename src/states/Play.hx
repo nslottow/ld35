@@ -20,7 +20,6 @@ class Play extends luxe.States.State {
 	override function onenter<T>(_map_index:T) {
 		initial_map_index = cast _map_index;
 
-
 		parcel = new Parcel({
             jsons: [
 				{ id:'assets/animations/cha_alien.json' },

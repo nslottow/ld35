@@ -10,16 +10,9 @@ import snow.types.Types.AudioState;
 import luxe.utils.Maths;
 
 /**
-	change energy level
-		choose base +- 1 mod 7
-		killing at gunman
-		picking up blobs
-
-
-	TODO: choose the next energy = current +- 1 mod 7
-	TODO: choose the next motif randomly
-			when there is no next motif, and when we switch to the next motif
-	TODO: ability to trigger next motif or next energy, which causes
+	TODO: When changing energy level, no need to crossfade
+	TODO: Change motifs randomly at any point in time -> crossfade new motif
+	TODO: If the new motif is requested within 2-3 seconds of a boundary, wait for the boundary
 **/
 class Music {
 	public static var current_energy:MusicInstance;
@@ -28,6 +21,8 @@ class Music {
 
 	static var fade_to:MusicInstance;
 	static var fade_from:MusicInstance;
+
+	static inline var music_volume = 0.3;
 
 	public static var transition_next_loop:Bool = false;
 
@@ -43,8 +38,8 @@ class Music {
 	static var on_fade_complete:Void->Void;
 
 	public static function init() {
-		load_parcel('current_energy', 1, 2);
-		load_parcel('next_energy', 1, 3);
+		load_parcel('current_energy', 2, 1);
+		load_parcel('next_energy', 2, 2);
 		load_parcel('next_motif', 2, 1);
 	}
 
@@ -70,12 +65,12 @@ class Music {
 		var resource = Luxe.resources.audio(resource_id);
 
 		switch (info.target) {
-			case 'active':
+			case 'current_energy':
 				trace('loaded active: $resource_id');
 				if (current_energy == null) {
 					// Startup two handles for looping
-					var active_handle = Luxe.audio.play(resource.source, 1.0);
-					var inactive_handle = Luxe.audio.play(resource.source, 1.0);
+					var active_handle = Luxe.audio.play(resource.source, music_volume);
+					var inactive_handle = Luxe.audio.play(resource.source, music_volume);
 					Luxe.audio.pause(inactive_handle);
 
 					current_energy = {
@@ -88,16 +83,22 @@ class Music {
 
 					// Start the timer to swap the active and inactive handle
 					loop_timer = Luxe.timer.schedule(loop_length_seconds, loop_handler, true);
+
+					// TODO: if this loads after next energy, setup the next energy position
+					// or just load next energy here
 				}
 
-			case 'next':
+			case 'next_energy':
 				trace('loaded next: $resource_id');
 				if (next_energy == null) {
 					var active_handle = Luxe.audio.play(resource.source, 0);
 					var inactive_handle = Luxe.audio.play(resource.source, 0);
 					Luxe.audio.pause(inactive_handle);
 
-					var elapsed_time = snow.Snow.timestamp - (loop_timer.fire_at - loop_timer.time);
+					var elapsed_time:Float = 0;
+					if (loop_timer != null) {
+						elapsed_time = snow.Snow.timestamp - (loop_timer.fire_at - loop_timer.time);
+					}
 					Luxe.audio.position(active_handle, elapsed_time);
 
 					next_energy = {
@@ -109,6 +110,12 @@ class Music {
 					};
 				}
 		}
+	}
+
+	public static function pause() {
+	}
+
+	public static function resume() {
 	}
 
 	static function loop_handler() {
@@ -132,12 +139,15 @@ class Music {
 			on_fade_complete = function() {
 				var old = current_energy;
 				current_energy = next_energy;
+				next_energy = null;
 
 				// throw out the music that is totally faded out
 				Luxe.audio.stop(old.active_handle);
 				Luxe.audio.stop(old.inactive_handle);
 
 				// start loading the next
+				var next_energy_level = (fade_to.energy + 1) % 7 + 1;
+				load_parcel('next_energy', current_energy.motif, next_energy_level);
 			}
 		}
 	}
@@ -147,8 +157,8 @@ class Music {
 		var t = Maths.clamp(elapsed_time / fade_length_seconds, 0, 1);
 
 		var pi = 3.1415;
-		var fade_from_volume = (Math.cos(t * pi) + 1.0) * 0.5;
-		var fade_to_volume = (Math.cos((1.0 - t) * pi) + 1.0) * 0.5;
+		var fade_from_volume = (Math.cos(t * pi) + 1.0) * 0.5 * music_volume;
+		var fade_to_volume = (Math.cos((1.0 - t) * pi) + 1.0) * 0.5 * music_volume;
 
 		trace('elapsed: $elapsed_time, t: $t, fade_to_volume: $fade_to_volume, fade_from_volume: $fade_from_volume');
 

@@ -320,6 +320,7 @@ class Level {
 
 
 			PlayerController.instance.active = false;
+			Music.transition_next_loop = true;
 		}
 	}
 

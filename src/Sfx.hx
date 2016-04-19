@@ -48,7 +48,7 @@ class Sfx {
 		for (i in 0...count) {
 			var sfx = unplayed_sfx[random.int(unplayed_sfx.length)];
 			unplayed_sfx.remove(sfx);
-			var volume = random.float(0.04, 0.07) / count;
+			var volume = random.float(0.09, 0.12) / count;
 			Luxe.timer.schedule(delay, function() {
 				Luxe.audio.play(sfx, volume);
 			});
@@ -61,7 +61,7 @@ class Sfx {
 		var delay = 0.05;
 
 		for (i in 0...count) {
-			var volume = random.float(0.04, 0.07) / count;
+			var volume = random.float(0.09, 0.12) / count;
 			Luxe.timer.schedule(delay, function() {
 				Luxe.audio.play(fall_sfx, volume);
 			});
@@ -73,8 +73,8 @@ class Sfx {
 		queue_for_tick({
 			source: eat_sfx,
 			delay: 0.02,
-			delay_delta_min: 0.04,
-			delay_delta_max: 0.07,
+			delay_delta_min: 0.1,
+			delay_delta_max: 0.2,
 			volume_min: 0.04,
 			volume_max: 0.07
 		});
@@ -86,8 +86,8 @@ class Sfx {
 			delay: 0,
 			delay_delta_min: 0,
 			delay_delta_max: 0,
-			volume_min: 0.04,
-			volume_max: 0.04
+			volume_min: 0.1,
+			volume_max: 0.1
 		});
 	}
 
@@ -97,8 +97,8 @@ class Sfx {
 			delay: delay,
 			delay_delta_min: 0,
 			delay_delta_max: 0,
-			volume_min: 0.04,
-			volume_max: 0.09
+			volume_min: 0.09,
+			volume_max: 0.14
 		});
 	}
 
