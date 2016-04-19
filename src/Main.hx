@@ -16,20 +16,6 @@ class Main extends luxe.Game {
 	public static var states:StateManager;
 
 	override function config(config:luxe.AppConfig) {
-		config.preload = {
-            jsons: [
-				{ id:'assets/animations/cha_alien.json' },
-				{ id:'assets/animations/cha_mib.json' }
-			],
-			textures: [
-                { id: 'assets/textures/cha_alien.png' },
-                { id: 'assets/textures/cha_mib.png' }
-			],
-			texts: [
-				{ id: 'assets/maps/env_test_00.json' }, // default map
-			]
-		};
-
 		return config;
 	}
 
@@ -42,7 +28,8 @@ class Main extends luxe.Game {
 			size: screen_size_points,
 			centered: false,
 			color: background_color,
-			no_scene: true
+			no_scene: true,
+			depth: -1000
 		});
 
 		ScreenFade.init();
