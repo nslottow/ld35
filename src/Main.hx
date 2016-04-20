@@ -139,5 +139,9 @@ class Main extends luxe.Game {
 		Music.init();
 #end
 	}
+
+	override function update(dt:Float) {
+		Music.update(dt);
+	}
 }
 
