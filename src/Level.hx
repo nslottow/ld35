@@ -295,24 +295,26 @@ class Level {
 			var delay = 0.4;
 
 			Luxe.timer.schedule(delay, function() {
-				Luxe.audio.play(Luxe.resources.audio('assets/sfx/elevatorbing-1.ogg').source, 0.5);
+				Luxe.audio.play(Luxe.resources.audio('assets/sfx/elevatorbing-1.ogg').source, 0.8 * Sfx.master_volume);
 			});
 
 			delay += 1.2;
 
 			Luxe.timer.schedule(delay, function() {
 				ScreenFade.fade_to_black(2);
-				Luxe.audio.play(Luxe.resources.audio('assets/sfx/elevator-1.ogg').source, 0.5);
+				Luxe.audio.play(Luxe.resources.audio('assets/sfx/elevator-1.ogg').source, 0.8 * Sfx.master_volume);
+				Music.transition_to_next_motif = true;
 			});
 
 			delay += 2.6;
 
 			Luxe.timer.schedule(delay, function() {
-				Luxe.audio.play(Luxe.resources.audio('assets/sfx/elevatorbing-2.ogg').source, 0.5);
+				Luxe.audio.play(Luxe.resources.audio('assets/sfx/elevatorbing-2.ogg').source, 0.8 * Sfx.master_volume);
 			});
 
 			delay += 0.2;
 			Luxe.timer.schedule(delay, function() {
+
 				load_indexed_map(last_played_map_index + 1, function() {
 					ScreenFade.fade_from_black(0.7);
 				});
@@ -320,7 +322,6 @@ class Level {
 
 
 			PlayerController.instance.active = false;
-			Music.transition_to_next_motif = true;
 		}
 	}
 

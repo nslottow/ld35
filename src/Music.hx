@@ -134,8 +134,19 @@ class Music {
 	static function start_crossfade() {
 		// Begin crossfade
 		crossfading_motif = next_motif;
-		crossfading_motif.handle = Luxe.audio.play(crossfading_motif.source, 0);
+		var handle = crossfading_motif.handle = Luxe.audio.play(crossfading_motif.source, 0);
+		var current_energy_pos = Luxe.audio.position_of(current_energy.handle);
+		Luxe.audio.position(handle, current_energy_pos);
 		crossfade_start_time = Luxe.time;
+		
+		// Repick the next energy level
+		next_energy = null;
+		var random = Luxe.utils.random;
+		var motif = crossfading_motif.motif;
+		var energy = random.int(1, 7);
+
+		load_music_async(MusicSlot.next_energy, motif, energy);
+
 
 		choose_next_motif();
 	}
@@ -208,7 +219,7 @@ class Music {
 				next_energy = null;
 				var random = Luxe.utils.random;
 				var motif = current_energy.motif;
-				var energy = random.int(1, 7);//((current_energy.energy - 1) + random.int(-1, 1)) % 7 + 1;
+				var energy = random.int(1, 7);
 				
 				load_music_async(MusicSlot.next_energy, motif, energy);
 			} else {

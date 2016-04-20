@@ -9,6 +9,8 @@ import snow.types.Types.AudioHandle;
 import snow.types.Types.AudioState;
 
 class Sfx {
+	public static var master_volume = 0.8;
+
 	static var select_sfx:AudioSource;
 
 	// in-game sfx
@@ -48,9 +50,9 @@ class Sfx {
 		for (i in 0...count) {
 			var sfx = unplayed_sfx[random.int(unplayed_sfx.length)];
 			unplayed_sfx.remove(sfx);
-			var volume = random.float(0.09, 0.12) / count;
+			var volume = random.float(0.5, 0.6) / count;
 			Luxe.timer.schedule(delay, function() {
-				Luxe.audio.play(sfx, volume);
+				Luxe.audio.play(sfx, volume * master_volume);
 			});
 			delay += random.float(0.01, 0.05);
 		}
@@ -61,9 +63,9 @@ class Sfx {
 		var delay = 0.05;
 
 		for (i in 0...count) {
-			var volume = random.float(0.09, 0.12) / count;
+			var volume = random.float(0.5, 0.6) / count;
 			Luxe.timer.schedule(delay, function() {
-				Luxe.audio.play(fall_sfx, volume);
+				Luxe.audio.play(fall_sfx, volume * master_volume);
 			});
 			delay += random.float(0.01, 0.05);
 		}
@@ -75,8 +77,8 @@ class Sfx {
 			delay: 0.02,
 			delay_delta_min: 0.1,
 			delay_delta_max: 0.2,
-			volume_min: 0.04,
-			volume_max: 0.07
+			volume_min: 0.7,
+			volume_max: 0.8
 		});
 	}
 
@@ -86,8 +88,8 @@ class Sfx {
 			delay: 0,
 			delay_delta_min: 0,
 			delay_delta_max: 0,
-			volume_min: 0.1,
-			volume_max: 0.1
+			volume_min: 0.7,
+			volume_max: 0.7
 		});
 	}
 
@@ -97,8 +99,8 @@ class Sfx {
 			delay: delay,
 			delay_delta_min: 0,
 			delay_delta_max: 0,
-			volume_min: 0.09,
-			volume_max: 0.14
+			volume_min: 0.8,
+			volume_max: 0.8
 		});
 	}
 
@@ -128,7 +130,7 @@ class Sfx {
 			for (i in 0...count) {
 				var volume = random.float(info.volume_min, info.volume_max) / count;
 				Luxe.timer.schedule(delay, function() {
-					Luxe.audio.play(source, volume);
+					Luxe.audio.play(source, volume * master_volume);
 				});
 
 				delay += random.float(info.delay_delta_min, info.delay_delta_max);

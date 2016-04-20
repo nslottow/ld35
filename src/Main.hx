@@ -136,8 +136,8 @@ class Main extends luxe.Game {
 		}
 #else
 		states.set('level_select');
-		Music.init();
 #end
+		Music.init();
 	}
 
 	override function update(dt:Float) {
